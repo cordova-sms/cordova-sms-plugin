@@ -15,10 +15,10 @@ public class SmsPlugin extends CordovaPlugin {
 	@Override
 	public boolean execute(String action, JSONArray args, final CallbackContext callbackContext) throws JSONException {
 		if (action.equals(ACTION_SEND_SMS)) {
-			try {
-				String method = args.getString(0);
-				String phoneNumber = args.getString(1);
-				String message = args.getString(2);
+			try {				
+				String phoneNumber = args.getString(0);
+				String message = args.getString(1);
+				String method = args.getString(2);
 				
 				if(method.equalsIgnoreCase("INTENT")){
 					invokeSMSIntent(phoneNumber, message);
