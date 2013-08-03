@@ -1,7 +1,7 @@
 var SmsPlugin = function () {};
 
-SmsPlugin.prototype.send = function (method, phone, message, successCallback, failureCallback) {    
-    return PhoneGap.exec(successCallback, failureCallback, 'SmsPlugin', "SendSMS", [method , phone, message]);
+SmsPlugin.prototype.send = function (phone, message, method, successCallback, failureCallback) {    
+    return PhoneGap.exec(successCallback, failureCallback, 'SmsPlugin', "SendSMS", [phone, message, method]);
 };
 
 PhoneGap.addConstructor(function() {
