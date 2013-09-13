@@ -5,9 +5,9 @@ import org.json.JSONException;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.telephony.SmsManager;
-import org.apache.cordova.api.CallbackContext;
-import org.apache.cordova.api.CordovaPlugin;
-import org.apache.cordova.api.PluginResult;
+import org.apache.cordova.CallbackContext;
+import org.apache.cordova.CordovaPlugin;
+import org.apache.cordova.PluginResult;
 
 public class SmsPlugin extends CordovaPlugin {
 	public final String ACTION_SEND_SMS = "SendSMS";

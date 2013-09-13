@@ -7,6 +7,24 @@ This Android Phonegap plugin allows you to easily send SMS in android using both
 
 This was forked from https://github.com/javatechig/phonegap-sms-plugin so that I could upgreade it to phonegap 3.0.
 
+Instalation
+=================
+
+Using the Phonegap CLI run:
+
+    phonegap local plugin add https://github.com/aharris88/phonegap-sms-plugin
+
+This will place the plugin in your plugins directory and update your android.json file that keeps track of installed plugins.
+
+Then when you run:
+
+	phonegap build android
+
+or
+	phonegap install android
+
+phonegap will put the necessary files into the platforms/android directory. It will update AndroidManifest.xml, res/xml/config.xml, and it will add the src/org/apache/cordova/sms directory.
+
 Example Usage
 =================
 
