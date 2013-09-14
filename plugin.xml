@@ -6,7 +6,7 @@
     <name>SmsSend</name>
     <description>Cordova SMS Send Plugin</description>
     <license>MIT</license>
-    <keywords>cordova,sms,</keywords>
+    <keywords>cordova,phonegap,sms</keywords>
 
 
     <js-module src="www/smsplugin.js" name="sms">
@@ -21,7 +21,11 @@
             </feature>
         </config-file>
 
-        <source-file src="src/android/SmsPlugin.java" target-dir="src/org/apache/cordova/sms" />      
-     </platform>
+        <config-file target="AndroidManifest.xml" parent="/manifest">
+            <uses-permission android:name="android.permission.SEND_SMS" />
+        </config-file>
+        
+        <source-file src="src/android/SmsPlugin.java" target-dir="src/org/apache/cordova/sms" />
+    </platform>
           
 </plugin>
