@@ -7,7 +7,7 @@ This Android Phonegap plugin allows you to easily send SMS in android using both
 
 This was forked from https://github.com/javatechig/phonegap-sms-plugin so that I could upgreade it to phonegap 3.0.
 
-Instalation
+Installation
 =================
 
 Using the Phonegap CLI run:

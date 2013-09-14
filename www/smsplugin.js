@@ -2,7 +2,7 @@ var exec = require("cordova/exec");
 var SmsPlugin = function () {};
 
 SmsPlugin.prototype.send = function (phone, message, method, successCallback, failureCallback) {
-    return cordova.exec(successCallback, failureCallback, 'SmsPlugin', "SendSMS", [phone, message, method]);
+    exec(successCallback, failureCallback, 'SmsPlugin', "SendSMS", [phone, message, method]);
 };
 
 window.sms = new SmsPlugin();
