@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
-           id="org.apache.cordova.sms.smssend"
+           id="org.apache.cordova.sms.SmsPlugin"
       version="0.1.0">
     <name>SmsPlugin</name>
     <description>Cordova SMS Send Plugin</description>
