@@ -17,7 +17,7 @@
     <platform name="android">
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="SmsSend">
-                <param name="android-package" value="org.apache.cordova.sms.smssend"/>
+                <param name="android-package" value="org.apache.cordova.sms.SmsPlugin"/>
             </feature>
         </config-file>
 
