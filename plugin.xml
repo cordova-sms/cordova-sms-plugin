@@ -3,7 +3,7 @@
 <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
            id="org.apache.cordova.sms.smssend"
       version="0.1.0">
-    <name>SmsSend</name>
+    <name>SmsPlugin</name>
     <description>Cordova SMS Send Plugin</description>
     <license>MIT</license>
     <keywords>cordova,phonegap,sms</keywords>
@@ -16,7 +16,7 @@
     <!-- android -->
     <platform name="android">
         <config-file target="res/xml/config.xml" parent="/*">
-            <feature name="SmsSend">
+            <feature name="SmsPlugin">
                 <param name="android-package" value="org.apache.cordova.sms.SmsPlugin"/>
             </feature>
         </config-file>
