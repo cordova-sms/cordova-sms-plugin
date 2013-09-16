@@ -9,8 +9,8 @@
     <keywords>cordova,phonegap,sms</keywords>
 
 
-    <js-module src="www/smsplugin.js" name="sms">
-        <clobbers target="sms" />
+    <js-module src="www/smsplugin.js" name="SmsPlugin">
+        <clobbers target="SmsPlugin" />
     </js-module>
 
     <!-- android -->
