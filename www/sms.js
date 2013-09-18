@@ -1,7 +1,6 @@
 
 var sms = {
     send: function(phone, message, method, successCallback, failureCallback) {
-        alert("sms.send");
         cordova.exec(
             successCallback,
             failureCallback,

@@ -28,26 +28,42 @@ phonegap will put the necessary files into the platforms/android directory. It w
 Example Usage
 =================
 
-	<script type="text/javascript">
-	$(document).ready(function() {
-		//leave empty for sending sms using default intent
-		$("#btnDefaultSMS").click(function(){
-			var number = $("#numberTxt").val();
-			var message = $("#messageTxt").val();
-			SmsPlugin.prototype.send(number, message, '',
-				function () { 
-					alert('Message sent successfully');
-				},
-				function (e) {
-					alert('Message Failed:' + e);
-				}
-			);
-		});
-	});
-	</script>
+HTML
 
-	<input name="" id="numberTxt" placeholder="Enter mobile number" value="" type="tel" data-mini="true">
-	<br/>
-	<textarea name="" id="messageTxt" placeholder="Enter message" data-mini="false"></textarea>
-	<br/>
-	<input id="btnDefaultSMS" type="submit" data-theme="e" value="Send SMS" data-mini="false">
+	<input name="" id="numberTxt" placeholder="Enter mobile number" value="" type="tel" />
+    <br/>
+    <textarea name="" id="messageTxt" placeholder="Enter message"></textarea>
+    <br/>
+    <input id="btnDefaultSMS" type="button" value="Send SMS" />
+
+Javascript
+Note that the following code uses jquery.
+
+	var app = {
+	    // Application Constructor
+	    initialize: function() {
+	        this.bindEvents();
+	    },
+	    // Bind Event Listeners
+	    //
+	    // Bind any events that are required on startup. Common events are:
+	    // 'load', 'deviceready', 'offline', and 'online'.
+	    bindEvents: function() {
+	        document.addEventListener('deviceready', this.onDeviceReady, false);
+	    },
+	    // deviceready Event Handler
+	    //
+	    // The scope of 'this' is the event. In order to call the 'receivedEvent'
+	    // function, we must explicity call 'app.receivedEvent(...);'
+	    onDeviceReady: function() {
+	        $("#btnDefaultSMS").click(function(){
+	            alert("click");
+	            var number = $("#numberTxt").val();
+	            var message = $("#messageTxt").val();
+	            var intent = "INTENT"; //leave empty for sending sms using default intent
+	            var success = function () { alert('Message sent successfully'); };
+	            var error = function (e) { alert('Message Failed:' + e); };
+	            sms.send(number, message, intent, success, error);
+	        });
+	    }
+	};

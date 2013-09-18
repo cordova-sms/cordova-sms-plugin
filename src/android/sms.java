@@ -40,6 +40,7 @@ public class Sms extends CordovaPlugin {
 	private void invokeSMSIntent(String phoneNumber, String message) {
 		Intent sendIntent = new Intent(Intent.ACTION_VIEW);
         sendIntent.putExtra("sms_body", message);
+		sendIntent.putExtra("address", phoneNumber);
         sendIntent.setType("vnd.android-dir/mms-sms");
         this.cordova.getActivity().startActivity(sendIntent);
 	}
