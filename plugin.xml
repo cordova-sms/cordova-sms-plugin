@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
-           id="org.apache.cordova.sms.SmsPlugin"
+           id="com.adamwadeharris.sms"
       version="0.1.0">
-    <name>SmsPlugin</name>
+    <name>Sms</name>
     <description>Cordova SMS Send Plugin</description>
     <license>MIT</license>
     <keywords>cordova,phonegap,sms</keywords>
 
 
-    <js-module src="www/smsplugin.js" name="SmsPlugin">
-        <clobbers target="SmsPlugin" />
+    <js-module src="www/sms.js" name="Sms">
+        <clobbers target="Sms" />
     </js-module>
 
     <!-- android -->
     <platform name="android">
         <config-file target="res/xml/config.xml" parent="/*">
-            <feature name="SmsPlugin">
-                <param name="android-package" value="org.apache.cordova.sms.SmsPlugin"/>
+            <feature name="Sms">
+                <param name="android-package" value="com.adamwadeharris.sms"/>
             </feature>
         </config-file>
 
@@ -25,7 +25,7 @@
             <uses-permission android:name="android.permission.SEND_SMS" />
         </config-file>
         
-        <source-file src="src/android/SmsPlugin.java" target-dir="src/org/apache/cordova/sms" />
+        <source-file src="src/android/Sms.java" target-dir="src/com/adamwadeharris/sms" />
     </platform>
           
 </plugin>
