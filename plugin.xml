@@ -10,14 +10,14 @@
 
 
     <js-module src="www/sms.js" name="Sms">
-        <clobbers target="Sms" />
+        <clobbers target="window.sms" />
     </js-module>
 
     <!-- android -->
     <platform name="android">
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="Sms">
-                <param name="android-package" value="com.adamwadeharris.sms"/>
+                <param name="android-package" value="com.adamwadeharris.sms.Sms"/>
             </feature>
         </config-file>
 
