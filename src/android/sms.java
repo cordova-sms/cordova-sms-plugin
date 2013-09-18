@@ -1,4 +1,4 @@
-package org.apache.cordova.plugin;
+package com.adamwadeharris.sms;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -9,8 +9,8 @@ import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.PluginResult;
 
-public class SmsPlugin extends CordovaPlugin {
-	public final String ACTION_SEND_SMS = "SendSMS";
+public class Sms extends CordovaPlugin {
+	public final String ACTION_SEND_SMS = "send";
 
 	@Override
 	public boolean execute(String action, JSONArray args, final CallbackContext callbackContext) throws JSONException {
@@ -24,7 +24,7 @@ public class SmsPlugin extends CordovaPlugin {
 					invokeSMSIntent(phoneNumber, message);
                     callbackContext.sendPluginResult(new PluginResult( PluginResult.Status.NO_RESULT));
 				} else{
-					sendSMS(phoneNumber, message);
+					send(phoneNumber, message);
 				}
 				
 				callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
@@ -44,7 +44,7 @@ public class SmsPlugin extends CordovaPlugin {
         this.cordova.getActivity().startActivity(sendIntent);
 	}
 
-	private void sendSMS(String phoneNumber, String message) {
+	private void send(String phoneNumber, String message) {
 		SmsManager manager = SmsManager.getDefault();
         PendingIntent sentIntent = PendingIntent.getActivity(this.cordova.getActivity(), 0, new Intent(), 0);
 		manager.sendTextMessage(phoneNumber, null, message, sentIntent, null);
