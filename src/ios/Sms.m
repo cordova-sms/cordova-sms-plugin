@@ -2,6 +2,7 @@
 //  https://github.com/phonegap/phonegap-plugins/blob/master/iOS/SMSComposer
 
 #import "Sms.h"
+#import <Cordova/NSArray+Comparisons.h>
 
 @implementation Sms
 
@@ -11,8 +12,12 @@
 	return self;
 }
 
-- (void)send:(NSArray *)arguments withDict:(NSDictionary *)options
+- (void)send:(CDVInvokedUrlCommand*)command
 {
+    //NSString* callbackId = command.callbackId;
+    //NSArray* fields = [command.arguments objectAtIndex:0];
+    NSDictionary* options = [command.arguments objectAtIndex:1 withDefault:[NSNull null]];
+    
 	Class messageClass = (NSClassFromString(@"MFMessageComposeViewController"));
 
 	if (messageClass != nil) {
@@ -20,14 +25,12 @@
 			UIAlertView *alert = [[UIAlertView alloc]	initWithTitle	:@"Notice" message:@"SMS Text not available."
 														delegate		:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
 			[alert show];
-			[alert release];
 			return;
 		}
 	} else {
 		UIAlertView *alert = [[UIAlertView alloc]	initWithTitle	:@"Notice" message:@"SMS Text not available."
 													delegate		:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
 		[alert show];
-		[alert release];
 		return;
 	}
 
@@ -48,7 +51,6 @@
 
 	[self.viewController presentModalViewController:picker animated:YES];
 	[[UIApplication sharedApplication] setStatusBarHidden:YES];	// /This hides the statusbar when the picker is presented -@RandyMcMillan
-	[picker release];
 }
 
 // Dismisses the composition interface when users tap Cancel or Send. Proceeds to update the message field with the result of the operation.
@@ -79,7 +81,6 @@
 
 	NSString *jsString = [[NSString alloc] initWithFormat:@"window.plugins.sms._didFinishWithResult(%d);", webviewResult];
 	[self writeJavascript:jsString];
-	[jsString release];
 }
 
 @end
