@@ -1,6 +1,8 @@
 phonegap-sms-plugin
 =====================
 
+Note. I'm still testing the iOS portion of this plugin.
+
 This Android Phonegap plugin allows you to easily send SMS in android using both native SMS Manager or by invoking the default android SMS app. This plugin works with PhoneGap 3.x version.
 
 This was forked from https://github.com/javatechig/phonegap-sms-plugin so that I could upgreade it to phonegap 3.0.

@@ -9,6 +9,17 @@ var sms = {
             [phone, message, method]
         );
     }
-}
+};
 
 module.exports = sms;
+
+
+
+/*SMSComposer.prototype.showSMSComposerWithCB = function(cbFunction,toRecipients,body) {
+	this.resultCallback = cbFunction;
+	this.showSms.apply(this,[toRecipients,body]);
+};
+
+SMSComposer.prototype._didFinishWithResult = function(res) {
+	this.resultCallback(res);
+};*/
