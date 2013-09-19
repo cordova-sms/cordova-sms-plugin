@@ -27,5 +27,15 @@
         
         <source-file src="src/android/Sms.java" target-dir="src/com/adamwadeharris/sms" />
     </platform>
-          
+    
+    <!-- ios -->
+    <platform name="ios">    
+        <config-file target="config.xml" parent="/*">
+            <feature name="Sms">
+                <param name="ios-package" value="Sms" /> 
+            </feature>
+        </config-file>
+        <header-file src="src/ios/Sms.h" />
+        <source-file src="src/ios/Sms.m" />
+    </platform> 
 </plugin>
