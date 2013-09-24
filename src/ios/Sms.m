@@ -12,12 +12,7 @@
 	return self;
 }
 
-- (void)send:(CDVInvokedUrlCommand*)command
-{
-    //NSString* callbackId = command.callbackId;
-    //NSArray* fields = [command.arguments objectAtIndex:0];
-    NSDictionary* options = [command.arguments objectAtIndex:1 withDefault:[NSNull null]];
-    
+- (void)send:(CDVInvokedUrlCommand*)command {
 	Class messageClass = (NSClassFromString(@"MFMessageComposeViewController"));
 
 	if (messageClass != nil) {
@@ -34,20 +29,20 @@
 		return;
 	}
 
-	NSString	*body = [options valueForKey:@"body"];
-	NSString	*toRecipientsString = [options valueForKey:@"toRecipients"];
+    NSString* toRecipientsString = [command.arguments objectAtIndex:0];
+    NSString* body = [command.arguments objectAtIndex:1];
 
 	MFMessageComposeViewController *picker = [[MFMessageComposeViewController alloc] init];
 
 	picker.messageComposeDelegate = self;
 
 	if (body != nil) {
-		picker.body = [options valueForKey:@"body"];
+        [picker setBody:body];
 	}
 
 	if (toRecipientsString != nil) {
-		[picker setRecipients:[toRecipientsString componentsSeparatedByString:@","]];
-	}
+        [picker setRecipients:[toRecipientsString componentsSeparatedByString:@","]];
+    }
 
 	[self.viewController presentModalViewController:picker animated:YES];
 	[[UIApplication sharedApplication] setStatusBarHidden:YES];	// /This hides the statusbar when the picker is presented -@RandyMcMillan

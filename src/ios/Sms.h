@@ -9,5 +9,5 @@
 
 @interface Sms : CDVPlugin <MFMessageComposeViewControllerDelegate>{}
 
-- (void)send:(NSArray *)arguments withDict:(NSDictionary *)options;
+- (void)send:(CDVInvokedUrlCommand*)command;
 @end
