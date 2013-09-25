@@ -37,5 +37,6 @@
         </config-file>
         <header-file src="src/ios/Sms.h" />
         <source-file src="src/ios/Sms.m" />
+        <framework src="MessageUI.framework" />
     </platform> 
 </plugin>
