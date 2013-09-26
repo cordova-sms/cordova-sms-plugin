@@ -5,8 +5,12 @@ import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
+
+import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.telephony.SmsManager;
 import android.util.Log;
 
@@ -21,7 +25,12 @@ public class Sms extends CordovaPlugin {
 				String phoneNumber = args.getJSONArray(0).join(";").replace("\"", "");
 				String message = args.getString(1);
 				String method = args.getString(2);
-				
+
+				if (!checkSupport()) {
+					callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, "SMS not supported on this platform"));
+					return true;
+				}
+
 				if(method.equalsIgnoreCase("INTENT")){
 					invokeSMSIntent(phoneNumber, message);
                     callbackContext.sendPluginResult(new PluginResult( PluginResult.Status.NO_RESULT));
@@ -38,7 +47,12 @@ public class Sms extends CordovaPlugin {
 		}
 		return false;
 	}
-	
+
+	private boolean checkSupport() {
+		Activity ctx = this.cordova.getActivity();
+		return ctx.getPackageManager().hasSystemFeature(PackageManager.FEATURE_TELEPHONY);
+	}
+
 	private void invokeSMSIntent(String phoneNumber, String message) {
 		// See http://stackoverflow.com/a/7242594
 		Log.d(LOG_TAG, "Starting SMS app, with number(s): " + phoneNumber + " and message " + message);
