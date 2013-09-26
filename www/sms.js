@@ -1,6 +1,9 @@
 
 var sms = {
     send: function(phone, message, method, successCallback, failureCallback) {
+        if (Object.prototype.toString.call(phone) !== '[object Array]') {
+          phone = [phone];
+        }
         cordova.exec(
             successCallback,
             failureCallback,

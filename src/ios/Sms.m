@@ -29,20 +29,20 @@
 		return;
 	}
 
-    NSString* toRecipientsString = [command.arguments objectAtIndex:0];
-    NSString* body = [command.arguments objectAtIndex:1];
+	NSArray* recipients = [command.arguments objectAtIndex:0];
+	NSString* body = [command.arguments objectAtIndex:1];
 
 	MFMessageComposeViewController *picker = [[MFMessageComposeViewController alloc] init];
 
 	picker.messageComposeDelegate = self;
 
 	if (body != nil) {
-        [picker setBody:body];
+		[picker setBody:body];
 	}
 
-	if (toRecipientsString != nil) {
-        [picker setRecipients:[toRecipientsString componentsSeparatedByString:@","]];
-    }
+	if (recipients != nil) {
+		[picker setRecipients:recipients];
+	}
 
 	[self.viewController presentModalViewController:picker animated:YES];
 	[[UIApplication sharedApplication] setStatusBarHidden:YES];	// /This hides the statusbar when the picker is presented -@RandyMcMillan
