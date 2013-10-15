@@ -1,56 +1,54 @@
+// phonegap-sms-plugin https://github.com/aharris88/phonegap-sms-plugin
 //  from SMS Composer plugin for PhoneGap- SMSComposer.m Created by Grant Sanders on 12/25/2010.
 //  https://github.com/phonegap/phonegap-plugins/blob/master/iOS/SMSComposer
+
+// Revised by Adam Harris https://github.com/aharris88
+// Revised by Clément Vollet https://github.com/dieppe
+// Quick Revision by Johnny Slagle 10/15/2013
 
 #import "Sms.h"
 #import <Cordova/NSArray+Comparisons.h>
 
 @implementation Sms
 
-- (CDVPlugin *)initWithWebView:(UIWebView *)theWebView
-{
+- (CDVPlugin *)initWithWebView:(UIWebView *)theWebView {
 	self = (Sms *)[super initWithWebView:theWebView];
 	return self;
 }
 
 - (void)send:(CDVInvokedUrlCommand*)command {
-	Class messageClass = (NSClassFromString(@"MFMessageComposeViewController"));
-
-	if (messageClass != nil) {
-		if (![messageClass canSendText]) {
-			UIAlertView *alert = [[UIAlertView alloc]	initWithTitle	:@"Notice" message:@"SMS Text not available."
-														delegate		:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
-			[alert show];
-			return;
-		}
-	} else {
-		UIAlertView *alert = [[UIAlertView alloc]	initWithTitle	:@"Notice" message:@"SMS Text not available."
-													delegate		:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+	
+	// MFMessageComposeViewController has been availible since iOS 4.0. There should be no issue with using it straight.
+	if(![MFMessageComposeViewController canSendText]) {
+		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Notice"
+														message:@"SMS Text not available."
+													   delegate:self
+											  cancelButtonTitle:@"OK"
+											  otherButtonTitles:nil];
 		[alert show];
 		return;
 	}
+		
+	MFMessageComposeViewController *composeViewController = [[MFMessageComposeViewController alloc] init];
+	composeViewController.messageComposeDelegate = self;
+
+	NSString* body = [command.arguments objectAtIndex:1];
+	if (body != nil) {
+		[composeViewController setBody:body];
+	}
 
 	NSArray* recipients = [command.arguments objectAtIndex:0];
-	NSString* body = [command.arguments objectAtIndex:1];
-
-	MFMessageComposeViewController *picker = [[MFMessageComposeViewController alloc] init];
-
-	picker.messageComposeDelegate = self;
-
-	if (body != nil) {
-		[picker setBody:body];
-	}
-
 	if (recipients != nil) {
-		[picker setRecipients:recipients];
+		[composeViewController setRecipients:recipients];
 	}
 
-	[self.viewController presentModalViewController:picker animated:YES];
-	[[UIApplication sharedApplication] setStatusBarHidden:YES];	// /This hides the statusbar when the picker is presented -@RandyMcMillan
+	[self.viewController presentViewController:composeViewController animated:YES completion:nil];
+	[[UIApplication sharedApplication] setStatusBarHidden:YES];
 }
 
+#pragma mark - MFMessageComposeViewControllerDelegate Implementation
 // Dismisses the composition interface when users tap Cancel or Send. Proceeds to update the message field with the result of the operation.
-- (void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result
-{
+- (void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result {
 	// Notifies users about errors associated with the interface
 	int webviewResult = 0;
 
@@ -72,10 +70,10 @@
 			break;
 	}
 
-	[self.viewController dismissModalViewControllerAnimated:YES];
-
-	NSString *jsString = [[NSString alloc] initWithFormat:@"window.plugins.sms._didFinishWithResult(%d);", webviewResult];
-	[self writeJavascript:jsString];
+	[self.viewController dismissViewControllerAnimated:YES completion:nil];
+	[[UIApplication sharedApplication] setStatusBarHidden:NO];	// Note: I put this in because it seemed to be missing.
+	
+	[self writeJavascript:[NSString stringWithFormat:@"window.plugins.sms._didFinishWithResult(%d);", webviewResult]];
 }
 
 @end
