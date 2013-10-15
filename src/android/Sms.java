@@ -1,4 +1,4 @@
-package com.adamwadeharris.sms;
+package org.apache.cordova.plugin.sms;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
