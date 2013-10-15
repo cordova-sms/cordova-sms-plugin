@@ -14,7 +14,7 @@ Installation
 
 Using the Phonegap CLI run:
 
-    phonegap local plugin add https://github.com/aharris88/phonegap-sms-plugin
+    phonegap local plugin add https://github.com/aharris88/phonegap-sms-plugin.git
 
 This will place the plugin in your plugins directory and update your android.json file that keeps track of installed plugins.
 
