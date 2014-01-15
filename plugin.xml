@@ -25,19 +25,29 @@
             <uses-permission android:name="android.permission.SEND_SMS" />
             <uses-feature android:name="android.hardware.telephony" android:required="false" />
         </config-file>
-        
+
         <source-file src="src/android/Sms.java" target-dir="src/org/apache/cordova/plugin/sms" />
     </platform>
-    
-    <!-- ios -->
-    <platform name="ios">    
+
+    <platform name="wp8">
+        <source-file src="src/wp8/Sms.cs" />
+
         <config-file target="config.xml" parent="/*">
             <feature name="Sms">
-                <param name="ios-package" value="Sms" /> 
+                <param name="wp-package" value="Sms" />
+            </feature>
+        </config-file>
+    </platform>
+
+    <!-- ios -->
+    <platform name="ios">
+        <config-file target="config.xml" parent="/*">
+            <feature name="Sms">
+                <param name="ios-package" value="Sms" />
             </feature>
         </config-file>
         <header-file src="src/ios/Sms.h" />
         <source-file src="src/ios/Sms.m" />
         <framework src="MessageUI.framework" weak="true" />
-    </platform> 
+    </platform>
 </plugin>
