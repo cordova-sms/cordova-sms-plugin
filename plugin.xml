@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
            id="org.apache.cordova.plugin.sms"
       version="0.1.0">
@@ -8,6 +7,9 @@
     <license>MIT</license>
     <keywords>cordova,phonegap,sms</keywords>
 
+    <engines>
+      <engine name="cordova" version=">=3.0.0" />
+    </engines>    
 
     <js-module src="www/sms.js" name="Sms">
         <clobbers target="window.sms" />
