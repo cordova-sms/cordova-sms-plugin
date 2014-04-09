@@ -9,8 +9,7 @@
 }
 
 - (void)send:(CDVInvokedUrlCommand*)command {
-  
-  // MFMessageComposeViewController has been availible since iOS 4.0. There should be no issue with using it straight.
+
   if(![MFMessageComposeViewController canSendText]) {
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Notice"
       message:@"SMS Text not available."
@@ -21,7 +20,7 @@
     [alert show];
     return;
   }
-    
+
   MFMessageComposeViewController *composeViewController = [[MFMessageComposeViewController alloc] init];
   composeViewController.messageComposeDelegate = self;
 
