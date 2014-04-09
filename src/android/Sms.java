@@ -55,28 +55,11 @@ public class Sms extends CordovaPlugin {
 
   private void invokeSMSIntent(String phoneNumber, String message) {
     //Log.d(LOG_TAG, "Starting SMS app, with number(s): " + phoneNumber + " and message " + message);
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) //At least KitKat
-    {
-      String defaultSmsPackageName = Telephony.Sms.getDefaultSmsPackage(activity); //Need to change the build to API 19
-
-      Intent sendIntent = new Intent(Intent.ACTION_SENDTO);
-      sendIntent.setData(Uri.parse("smsto:" + Uri.encode(phoneNumber)));
-
-      sendIntent.setType("text/plain");
-      sendIntent.putExtra(Intent.EXTRA_TEXT, message);
-
-      if (defaultSmsPackageName != null) {
-        sendIntent.setPackage(defaultSmsPackageName);
-      }
-      activity.startActivity(sendIntent);
-
-    } else {
-      Intent sendIntent = new Intent(Intent.ACTION_VIEW);
-      sendIntent.putExtra("sms_body", message);
-      //sendIntent.putExtra("address", phoneNumber);
-      sendIntent.setData(Uri.parse("smsto:" + Uri.encode(phoneNumber)));
-      this.cordova.getActivity().startActivity(sendIntent);
-    }
+    Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+    sendIntent.putExtra("sms_body", message);
+    sendIntent.putExtra("address", phoneNumber);
+    sendIntent.setData(Uri.parse("smsto:" + Uri.encode(phoneNumber)));
+    this.cordova.getActivity().startActivity(sendIntent);
   }
 
   private void send(String phoneNumber, String message) {
