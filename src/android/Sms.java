@@ -11,6 +11,8 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
+import android.provider.Telephony;
 import android.telephony.SmsManager;
 import android.util.Log;
 
@@ -55,15 +57,28 @@ public class Sms extends CordovaPlugin {
 
   private void invokeSMSIntent(String phoneNumber, String message) {
     //Log.d(LOG_TAG, "Starting SMS app, with number(s): " + phoneNumber + " and message " + message);
-    Intent sendIntent = new Intent(Intent.ACTION_VIEW);
-    sendIntent.putExtra("sms_body", message);
-    sendIntent.putExtra("address", phoneNumber);
-    sendIntent.setData(Uri.parse("smsto:" + Uri.encode(phoneNumber)));
-    this.cordova.getActivity().startActivity(sendIntent);
+    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+      String defaultSmsPackageName = Telephony.Sms.getDefaultSmsPackage(this.cordova.getActivity());
+
+      Intent sendIntent = new Intent(Intent.ACTION_SEND);
+      sendIntent.setType("text/plain");
+      sendIntent.putExtra(Intent.EXTRA_TEXT, message);
+
+      if (defaultSmsPackageName != null) {
+        sendIntent.setPackage(defaultSmsPackageName);
+      }
+      this.cordova.getActivity().startActivity(sendIntent);
+    } else {
+      Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+      sendIntent.setData(Uri.parse("sms:"));
+      sendIntent.putExtra("sms_body", message);
+      sendIntent.putExtra("address", Uri.encode(phoneNumber));
+      this.cordova.getActivity().startActivity(sendIntent);
+    }
   }
 
   private void send(String phoneNumber, String message) {
-    Log.d(LOG_TAG, "Sending SMS to " + phoneNumber + " and message " + message);
+    //Log.d(LOG_TAG, "Sending SMS to " + phoneNumber + " and message " + message);
     SmsManager manager = SmsManager.getDefault();
     PendingIntent sentIntent = PendingIntent.getActivity(this.cordova.getActivity(), 0, new Intent(), 0);
     manager.sendTextMessage(phoneNumber, null, message, sentIntent, null);
