@@ -27,6 +27,12 @@ or
 
 phonegap will put the necessary files into the platforms/android directory. It will update AndroidManifest.xml, res/xml/config.xml, and it will add the src/org/apache/cordova/sms directory.
 
+Also, for android you have to make sure that you set the target to android-19 or later in your ./platforms/android/project.properties file like this:
+
+# Project target.
+target=android-19
+
+
 Example Usage
 =================
 
