@@ -39,9 +39,8 @@
 }
 
 #pragma mark - MFMessageComposeViewControllerDelegate Implementation
-// Dismisses the composition interface when users tap Cancel or Send. Proceeds to update the message field with the result of the operation.
 - (void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result {
-  // Notifies users about errors associated with the interface
+
   int webviewResult = 0;
 
   switch (result) {
@@ -63,7 +62,7 @@
   }
 
   [self.viewController dismissViewControllerAnimated:YES completion:nil];
-  [[UIApplication sharedApplication] setStatusBarHidden:NO];  // Note: I put this in because it seemed to be missing.
+  [[UIApplication sharedApplication] setStatusBarHidden:NO];
   
   [self writeJavascript:[NSString stringWithFormat:@"window.plugins.sms._didFinishWithResult(%d);", webviewResult]];
 }
