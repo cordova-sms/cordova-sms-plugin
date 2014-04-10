@@ -7,8 +7,6 @@ The Android portion was forked from https://github.com/javatechig/phonegap-sms-p
 
 The iOS portion was copied from https://github.com/phonegap/phonegap-plugins by Jesse MacFadyen and then modified slightly to work with this plugin and phonegap 3.x.
 
-
-
 Installation
 =================
 
@@ -20,25 +18,20 @@ This will place the plugin in your plugins directory and update your android.jso
 
 Then when you run:
 
-	phonegap build android
+    phonegap build android
 
 or
-	phonegap install android
+
+    phonegap install android
 
 phonegap will put the necessary files into the platforms/android directory. It will update AndroidManifest.xml, res/xml/config.xml, and it will add the src/org/apache/cordova/sms directory.
-
-Also, for android you have to make sure that you set the target to android-19 or later in your ./platforms/android/project.properties file like this:
-
-# Project target.
-target=android-19
-
 
 Example Usage
 =================
 
 HTML
 
-	<input name="" id="numberTxt" placeholder="Enter mobile number" value="" type="tel" />
+    <input name="" id="numberTxt" placeholder="Enter mobile number" value="" type="tel" />
     <br/>
     <textarea name="" id="messageTxt" placeholder="Enter message"></textarea>
     <br/>
@@ -47,34 +40,67 @@ HTML
 Javascript
 Note that the following code uses jquery.
 
-	var app = {
-	    // Application Constructor
-	    initialize: function() {
-	        this.bindEvents();
-	    },
-	    // Bind Event Listeners
-	    //
-	    // Bind any events that are required on startup. Common events are:
-	    // 'load', 'deviceready', 'offline', and 'online'.
-	    bindEvents: function() {
-	        document.addEventListener('deviceready', this.onDeviceReady, false);
-	    },
-	    // deviceready Event Handler
-	    //
-	    // The scope of 'this' is the event. In order to call the 'receivedEvent'
-	    // function, we must explicity call 'app.receivedEvent(...);'
-	    onDeviceReady: function() {
-	        $("#btnDefaultSMS").click(function(){
-	            alert("click");
-	            var number = $("#numberTxt").val();
-	            var message = $("#messageTxt").val();
-	            var intent = "INTENT"; //leave empty for sending sms using default intent
-	            var success = function () { alert('Message sent successfully'); };
-	            var error = function (e) { alert('Message Failed:' + e); };
-	            sms.send(number, message, intent, success, error);
-	        });
-	    }
-	};
+    var app = {
+        // Application Constructor
+        initialize: function() {
+            this.bindEvents();
+        },
+        // Bind Event Listeners
+        //
+        // Bind any events that are required on startup. Common events are:
+        // 'load', 'deviceready', 'offline', and 'online'.
+        bindEvents: function() {
+            document.addEventListener('deviceready', this.onDeviceReady, false);
+        },
+        // deviceready Event Handler
+        //
+        // The scope of 'this' is the event. In order to call the 'receivedEvent'
+        // function, we must explicity call 'app.receivedEvent(...);'
+        onDeviceReady: function() {
+            $("#btnDefaultSMS").click(function(){
+                alert("click");
+                var number = $("#numberTxt").val();
+                var message = $("#messageTxt").val();
+                var intent = "INTENT"; //leave empty for sending sms using default intent
+                var success = function () { alert('Message sent successfully'); };
+                var error = function (e) { alert('Message Failed:' + e); };
+                sms.send(number, message, intent, success, error);
+            });
+        }
+    };
+
+Frequently Asked Questions
+=================
+
+###I get this error. What's wrong?
+
+    compile:
+        [javac] Compiling 4 source files to /Users/username/MyProject/platforms/android/bin/classes
+        [javac] /Users/username/MyProject/platforms/android/src/org/apache/cordova/plugin/sms/Sms.java:15: cannot find symbol
+        [javac] symbol  : class Telephony
+        [javac] location: package android.provider
+        [javac] import android.provider.Telephony;
+        [javac]                        ^
+        [javac] /Users/username/MyProject/platforms/android/src/org/apache/cordova/plugin/sms/Sms.java:60: cannot find symbol
+        [javac] symbol  : variable KITKAT
+        [javac] location: class android.os.Build.VERSION_CODES
+        [javac]     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        [javac]                                                    ^
+        [javac] /Users/username/MyProject/platforms/android/src/org/apache/cordova/plugin/sms/Sms.java:61: package Telephony does not exist
+        [javac]       String defaultSmsPackageName = Telephony.Sms.getDefaultSmsPackage(this.cordova.getActivity());
+        [javac]                                               ^
+        [javac] 3 errors
+
+    BUILD FAILED
+
+The problem is that you need to make sure that you set the target to android-19 or later in your ./platforms/android/project.properties file like this:
+
+    # Project target.
+    target=android-19
+
+###How can I send sms in my app without passing to native app like it can be done on Android?
+
+This isn't possible on iOS. It requires that you show the user the native sms composer, to be able to send an sms.
 
 Contributing
 =================
