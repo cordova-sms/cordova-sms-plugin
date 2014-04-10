@@ -6,6 +6,7 @@ import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Intent;
@@ -55,24 +56,26 @@ public class Sms extends CordovaPlugin {
     return ctx.getPackageManager().hasSystemFeature(PackageManager.FEATURE_TELEPHONY);
   }
 
+  @SuppressLint("NewApi")
   private void invokeSMSIntent(String phoneNumber, String message) {
     //Log.d(LOG_TAG, "Starting SMS app, with number(s): " + phoneNumber + " and message " + message);
-    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-      String defaultSmsPackageName = Telephony.Sms.getDefaultSmsPackage(this.cordova.getActivity());
+    if(phoneNumber == "") {
+      if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        String defaultSmsPackageName = Telephony.Sms.getDefaultSmsPackage(this.cordova.getActivity());
 
-      Intent sendIntent = new Intent(Intent.ACTION_SEND);
-      sendIntent.setType("text/plain");
-      sendIntent.putExtra(Intent.EXTRA_TEXT, message);
+        Intent sendIntent = new Intent(Intent.ACTION_SEND);
+        sendIntent.setType("text/plain");
+        sendIntent.putExtra(Intent.EXTRA_TEXT, message);
 
-      if (defaultSmsPackageName != null) {
-        sendIntent.setPackage(defaultSmsPackageName);
+        if (defaultSmsPackageName != null) {
+          sendIntent.setPackage(defaultSmsPackageName);
+        }
+        this.cordova.getActivity().startActivity(sendIntent);
       }
-      this.cordova.getActivity().startActivity(sendIntent);
     } else {
       Intent sendIntent = new Intent(Intent.ACTION_VIEW);
-      sendIntent.setData(Uri.parse("sms:"));
+      sendIntent.setData(Uri.parse("smsto:" + Uri.encode(phoneNumber)));
       sendIntent.putExtra("sms_body", message);
-      sendIntent.putExtra("address", Uri.encode(phoneNumber));
       this.cordova.getActivity().startActivity(sendIntent);
     }
   }
