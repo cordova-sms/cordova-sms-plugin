@@ -35,7 +35,6 @@
   }
 
   [self.viewController presentViewController:composeViewController animated:YES completion:nil];
-  [[UIApplication sharedApplication] setStatusBarHidden:YES];
 }
 
 #pragma mark - MFMessageComposeViewControllerDelegate Implementation
@@ -62,7 +61,6 @@
   }
 
   [self.viewController dismissViewControllerAnimated:YES completion:nil];
-  [[UIApplication sharedApplication] setStatusBarHidden:NO];
   
   [self writeJavascript:[NSString stringWithFormat:@"window.plugins.sms._didFinishWithResult(%d);", webviewResult]];
 }
