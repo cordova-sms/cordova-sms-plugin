@@ -6,6 +6,8 @@
 
 @interface Sms : CDVPlugin <MFMessageComposeViewControllerDelegate>
 
+@property(strong) NSString* callbackID;
+
 - (void)send:(CDVInvokedUrlCommand*)command;
 
 @end
