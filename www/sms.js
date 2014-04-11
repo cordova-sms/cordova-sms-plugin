@@ -1,10 +1,10 @@
 var sms = {
-  send: function(phone, message, method, successCallback, failureCallback) {
+  send: function(phone, message, method, success, failure) {
     phone = sms.convertPhoneToArray(phone);
 
     cordova.exec(
-      successCallback,
-      failureCallback,
+      success,
+      failure,
       'Sms',
       'send',
       [phone, message, method]
