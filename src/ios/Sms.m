@@ -34,6 +34,10 @@
     
     NSArray* recipients = [command.arguments objectAtIndex:0];
     if (recipients != nil) {
+        if ([recipients.firstObject isEqual: @""]) {
+            [recipients replaceObjectAtIndex:0 withObject:@"?"];
+        }
+        
         [composeViewController setRecipients:recipients];
     }
     
