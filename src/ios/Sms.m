@@ -32,7 +32,7 @@
         [composeViewController setBody:body];
     }
     
-    NSArray* recipients = [command.arguments objectAtIndex:0];
+    NSMutableArray* recipients = [command.arguments objectAtIndex:0];
     if (recipients != nil) {
         if ([recipients.firstObject isEqual: @""]) {
             [recipients replaceObjectAtIndex:0 withObject:@"?"];
