@@ -107,6 +107,11 @@ Contributing
 
 I believe that everything is working, feel free to put in an issue or to fork and make pull requests if you want to add a new feature.
 
+Things you can fix:
+* Allow for null number to be passed in
+  Right now, it breaks when a null value is passed in for a number, but it works if it's a blank string, and allows the user to pick the number
+  It should automatically convert a  null value to an empty string
+
 Copyright from android code
 =================
 
