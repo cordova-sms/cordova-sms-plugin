@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.Telephony;
 import android.telephony.SmsManager;
+import java.util.ArrayList;
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.PluginResult;
@@ -98,7 +99,19 @@ public class Sms extends CordovaPlugin {
   private void send(String phoneNumber, String message) {
     SmsManager manager = SmsManager.getDefault();
     PendingIntent sentIntent = PendingIntent.getBroadcast(this.cordova.getActivity(), 0, new Intent(INTENT_FILTER_SMS_SENT), 0);
-    manager.sendTextMessage(phoneNumber, null, message, sentIntent, null);
+
+    // Use SendMultipartTextMessage if the message requires it
+    int parts_size = manager.divideMessage(message).size();
+    if (parts_size > 1) {
+      ArrayList<String> parts = manager.divideMessage(message);
+      ArrayList<PendingIntent> sentIntents = new ArrayList<PendingIntent>();
+      for (int i = 0; i < parts_size; ++i) {
+        sentIntents.add(sentIntent);
+      }
+      manager.sendMultipartTextMessage(phoneNumber, null, parts, sentIntents, null);
+    } else {
+      manager.sendTextMessage(phoneNumber, null, message, sentIntent, null);
+    }
 
     // Don't return any result now, since status results will be sent when events come in from broadcast receiver
     PluginResult pluginResult = new PluginResult(PluginResult.Status.NO_RESULT);
