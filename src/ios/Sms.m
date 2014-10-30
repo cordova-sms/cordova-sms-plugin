@@ -73,13 +73,15 @@
     [self.viewController dismissViewControllerAnimated:YES completion:nil];
     
     if(webviewResult == 1) {
-        [super writeJavascript:[[CDVPluginResult resultWithStatus:CDVCommandStatus_OK
-                                                  messageAsString:message]
-                                toSuccessCallbackString:self.callbackID]];
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
+                                                          messageAsString:message];
+        
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackID];
     } else {
-        [super writeJavascript:[[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
-                                                  messageAsString:message]
-                                toErrorCallbackString:self.callbackID]];
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+                                                          messageAsString:message];
+
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackID];
     }
 }
 
