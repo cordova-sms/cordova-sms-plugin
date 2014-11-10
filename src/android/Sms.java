@@ -43,8 +43,8 @@ public class Sms extends CordovaPlugin {
 
         if (method.equalsIgnoreCase("INTENT")) {
           invokeSMSIntent(phoneNumber, message);
-          // the result is always false, so better pass no result for clarity
-          callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.NO_RESULT));
+          // always passes success back to the app
+          callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
         } else {
           // by creating this broadcast receiver we can check whether or not the SMS was sent
           if (receiver == null) {
