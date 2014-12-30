@@ -26,84 +26,79 @@ public class Sms extends CordovaPlugin {
 	BroadcastReceiver receiver;
 
 	@Override
-  public boolean execute(String action, JSONArray args, final CallbackContext callbackContext) throws JSONException {
-    
-    if (action.equals(ACTION_SEND_SMS)) {
-      try {
-        String phoneNumber = args.getJSONArray(0).join(";").replace("\"", "");
-        String message = args.getString(1);
-        String method = args.getString(2);
+	public boolean execute(String action, JSONArray args, final CallbackContext callbackContext) throws JSONException {
+		if (action.equals(ACTION_SEND_SMS)) {
+			try {
+				String phoneNumber = args.getJSONArray(0).join(";").replace("\"", "");
+				String message = args.getString(1);
+				String method = args.getString(2);
 
-        if (!checkSupport()) {
-        	callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, "SMS not supported on this platform"));
-          return true;
-        }
+				if (!checkSupport()) {
+					callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, "SMS not supported on this platform"));
+					return true;
+				}
 
-        if (method.equalsIgnoreCase("INTENT")) {
-          invokeSMSIntent(phoneNumber, message);
-          // always passes success back to the app
-          callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
-        } else {
-          // by creating this broadcast receiver we can check whether or not the SMS was sent
-          if (receiver == null) {
-            this.receiver = new BroadcastReceiver() {
-              @Override
-              public void onReceive(Context context, Intent intent) {
-            	  PluginResult pluginResult;
-            	  
-            	  switch (getResultCode()) {
-	            	  case SmsManager.STATUS_ON_ICC_SENT:
-	            		  pluginResult = new PluginResult(PluginResult.Status.OK);
-	            		  pluginResult.setKeepCallback(true);
-	            		  callbackContext.sendPluginResult(pluginResult);
-		            	  break;
-                  case Activity.RESULT_OK:
-                	  pluginResult = new PluginResult(PluginResult.Status.OK);
-                	  pluginResult.setKeepCallback(true);
-                	  callbackContext.sendPluginResult(pluginResult);
-                    break;
-                  case SmsManager.RESULT_ERROR_NO_SERVICE:
-                	  pluginResult = new PluginResult(PluginResult.Status.ERROR);
-                	  pluginResult.setKeepCallback(true);
-                	  callbackContext.sendPluginResult(pluginResult);
-                    break;
-                  default:
-                	  pluginResult = new PluginResult(PluginResult.Status.ERROR);
-                	  pluginResult.setKeepCallback(true);
-                	  callbackContext.sendPluginResult(pluginResult);
-                    break;
-                  }
-            	  
-              }
-              
-            };
-            final IntentFilter intentFilter = new IntentFilter();
-            intentFilter.addAction(INTENT_FILTER_SMS_SENT);
-            cordova.getActivity().registerReceiver(this.receiver, intentFilter);
-          }
-          send(phoneNumber, message);
-        }
-        return true;
-      } catch (JSONException ex) {
-        callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
-      }
-    }
-    return false;
-  }
+				if (method.equalsIgnoreCase("INTENT")) {
+					invokeSMSIntent(phoneNumber, message);
+					// always passes success back to the app
+					callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
+				} else {
+				  // by creating this broadcast receiver we can check whether or not the SMS was sent
+					if (receiver == null) {
+						this.receiver = new BroadcastReceiver() {
+							@Override
+							public void onReceive(Context context, Intent intent) {
+								PluginResult pluginResult;
+
+								switch (getResultCode()) {
+								  case SmsManager.STATUS_ON_ICC_SENT:
+									pluginResult = new PluginResult(PluginResult.Status.OK);
+									pluginResult.setKeepCallback(true);
+									callbackContext.sendPluginResult(pluginResult);
+									break;
+								  case Activity.RESULT_OK:
+									pluginResult = new PluginResult(PluginResult.Status.OK);
+									pluginResult.setKeepCallback(true);
+									callbackContext.sendPluginResult(pluginResult);
+									break;
+								  case SmsManager.RESULT_ERROR_NO_SERVICE:
+									pluginResult = new PluginResult(PluginResult.Status.ERROR);
+									pluginResult.setKeepCallback(true);
+									callbackContext.sendPluginResult(pluginResult);
+									break;
+								  default:
+									pluginResult = new PluginResult(PluginResult.Status.ERROR);
+									pluginResult.setKeepCallback(true);
+									callbackContext.sendPluginResult(pluginResult);
+									break;
+								}
+							}
+						};
+						final IntentFilter intentFilter = new IntentFilter();
+						intentFilter.addAction(INTENT_FILTER_SMS_SENT);
+						cordova.getActivity().registerReceiver(this.receiver, intentFilter);
+					}
+					send(phoneNumber, message);
+				}
+				return true;
+			} catch (JSONException ex) {
+				callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
+			}
+		}
+		return false;
+	}
 
 	private boolean checkSupport() {
 		Activity ctx = this.cordova.getActivity();
 		return ctx.getPackageManager().hasSystemFeature(
-				PackageManager.FEATURE_TELEPHONY);
+		PackageManager.FEATURE_TELEPHONY);
 	}
 
 	@SuppressLint("NewApi")
 	private void invokeSMSIntent(String phoneNumber, String message) {
 		Intent sendIntent;
-		if ("".equals(phoneNumber)
-				&& Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-			String defaultSmsPackageName = Telephony.Sms
-					.getDefaultSmsPackage(this.cordova.getActivity());
+		if ("".equals(phoneNumber) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+			String defaultSmsPackageName = Telephony.Sms.getDefaultSmsPackage(this.cordova.getActivity());
 
 			sendIntent = new Intent(Intent.ACTION_SEND);
 			sendIntent.setType("text/plain");
@@ -122,8 +117,7 @@ public class Sms extends CordovaPlugin {
 
 	private void send(String phoneNumber, String message) {
 		SmsManager manager = SmsManager.getDefault();
-		PendingIntent sentIntent = PendingIntent.getBroadcast(this.cordova
-				.getActivity(), 0, new Intent(INTENT_FILTER_SMS_SENT), 0);
+		PendingIntent sentIntent = PendingIntent.getBroadcast(this.cordova.getActivity(), 0, new Intent(INTENT_FILTER_SMS_SENT), 0);
 
 		// Use SendMultipartTextMessage if the message requires it
 		int parts_size = manager.divideMessage(message).size();
@@ -134,10 +128,9 @@ public class Sms extends CordovaPlugin {
 				sentIntents.add(sentIntent);
 			}
 			manager.sendMultipartTextMessage(phoneNumber, null, parts,
-					sentIntents, null);
+			sentIntents, null);
 		} else {
-			manager.sendTextMessage(phoneNumber, null, message, sentIntent,
-					null);
+			manager.sendTextMessage(phoneNumber, null, message, sentIntent, null);
 		}
 	}
 
