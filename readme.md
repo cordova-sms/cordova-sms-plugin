@@ -32,40 +32,22 @@ Example Usage
 HTML
 
     <input name="" id="numberTxt" placeholder="Enter mobile number" value="" type="tel" />
-    <br/>
     <textarea name="" id="messageTxt" placeholder="Enter message"></textarea>
-    <br/>
-    <input id="btnDefaultSMS" type="button" value="Send SMS" />
+    <input type="button" onclick="app.sendSms()" value="Send SMS" />
 
 Javascript
-Note that the following code uses jquery.
 
     var app = {
-        // Application Constructor
-        initialize: function() {
-            this.bindEvents();
-        },
-        // Bind Event Listeners
-        //
-        // Bind any events that are required on startup. Common events are:
-        // 'load', 'deviceready', 'offline', and 'online'.
-        bindEvents: function() {
-            document.addEventListener('deviceready', this.onDeviceReady, false);
-        },
-        // deviceready Event Handler
-        //
-        // The scope of 'this' is the event. In order to call the 'receivedEvent'
-        // function, we must explicity call 'app.receivedEvent(...);'
-        onDeviceReady: function() {
-            $("#btnDefaultSMS").click(function(){
-                alert("click");
-                var number = $("#numberTxt").val();
-                var message = $("#messageTxt").val();
-                var intent = "INTENT"; //leave empty for sending sms using default intent
-                var success = function () { alert('Message sent successfully'); };
-                var error = function (e) { alert('Message Failed:' + e); };
-                sms.send(number, message, intent, success, error);
-            });
+        sendSms: function() {
+            alert('click');
+            var number = document.getElementById('numberTxt').value;
+            var message = document.getElementById('messageTxt').value;
+            alert(number);
+            alert(message);
+            var intent = 'INTENT'; //leave empty for sending sms using default intent
+            var success = function () { alert('Message sent successfully'); };
+            var error = function (e) { alert('Message Failed:' + e); };
+            sms.send(number, message, intent, success, error);
         }
     };
 
@@ -98,7 +80,7 @@ The problem is that you need to make sure that you set the target to android-19 
     # Project target.
     target=android-19
 
-###How can I send sms in my app without passing to native app like it can be done on Android?
+###How can I send an sms in my iOS app without passing control to the native app like it can be done on Android?
 
 This isn't possible on iOS. It requires that you show the user the native sms composer, to be able to send an sms.
 
