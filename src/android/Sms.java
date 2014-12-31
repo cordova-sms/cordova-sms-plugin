@@ -27,6 +27,7 @@ public class Sms extends CordovaPlugin {
 
 	@Override
 	public boolean execute(String action, JSONArray args, final CallbackContext callbackContext) throws JSONException {
+
 		if (action.equals(ACTION_SEND_SMS)) {
 			try {
 				String phoneNumber = args.getJSONArray(0).join(";").replace("\"", "");
@@ -43,7 +44,7 @@ public class Sms extends CordovaPlugin {
 					// always passes success back to the app
 					callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
 				} else {
-				  // by creating this broadcast receiver we can check whether or not the SMS was sent
+					// by creating this broadcast receiver we can check whether or not the SMS was sent
 					if (receiver == null) {
 						this.receiver = new BroadcastReceiver() {
 							@Override
@@ -51,26 +52,26 @@ public class Sms extends CordovaPlugin {
 								PluginResult pluginResult;
 
 								switch (getResultCode()) {
-								  case SmsManager.STATUS_ON_ICC_SENT:
-									pluginResult = new PluginResult(PluginResult.Status.OK);
-									pluginResult.setKeepCallback(true);
-									callbackContext.sendPluginResult(pluginResult);
-									break;
-								  case Activity.RESULT_OK:
-									pluginResult = new PluginResult(PluginResult.Status.OK);
-									pluginResult.setKeepCallback(true);
-									callbackContext.sendPluginResult(pluginResult);
-									break;
-								  case SmsManager.RESULT_ERROR_NO_SERVICE:
-									pluginResult = new PluginResult(PluginResult.Status.ERROR);
-									pluginResult.setKeepCallback(true);
-									callbackContext.sendPluginResult(pluginResult);
-									break;
-								  default:
-									pluginResult = new PluginResult(PluginResult.Status.ERROR);
-									pluginResult.setKeepCallback(true);
-									callbackContext.sendPluginResult(pluginResult);
-									break;
+									case SmsManager.STATUS_ON_ICC_SENT:
+										pluginResult = new PluginResult(PluginResult.Status.OK);
+										pluginResult.setKeepCallback(true);
+										callbackContext.sendPluginResult(pluginResult);
+										break;
+									case Activity.RESULT_OK:
+										pluginResult = new PluginResult(PluginResult.Status.OK);
+										pluginResult.setKeepCallback(true);
+										callbackContext.sendPluginResult(pluginResult);
+										break;
+									case SmsManager.RESULT_ERROR_NO_SERVICE:
+										pluginResult = new PluginResult(PluginResult.Status.ERROR);
+										pluginResult.setKeepCallback(true);
+										callbackContext.sendPluginResult(pluginResult);
+										break;
+									default:
+										pluginResult = new PluginResult(PluginResult.Status.ERROR);
+										pluginResult.setKeepCallback(true);
+										callbackContext.sendPluginResult(pluginResult);
+										break;
 								}
 							}
 						};
@@ -90,8 +91,7 @@ public class Sms extends CordovaPlugin {
 
 	private boolean checkSupport() {
 		Activity ctx = this.cordova.getActivity();
-		return ctx.getPackageManager().hasSystemFeature(
-		PackageManager.FEATURE_TELEPHONY);
+		return ctx.getPackageManager().hasSystemFeature(PackageManager.FEATURE_TELEPHONY);
 	}
 
 	@SuppressLint("NewApi")
@@ -117,7 +117,8 @@ public class Sms extends CordovaPlugin {
 
 	private void send(String phoneNumber, String message) {
 		SmsManager manager = SmsManager.getDefault();
-		PendingIntent sentIntent = PendingIntent.getBroadcast(this.cordova.getActivity(), 0, new Intent(INTENT_FILTER_SMS_SENT), 0);
+		PendingIntent sentIntent = PendingIntent.getBroadcast(this.cordova.getActivity(),
+			0, new Intent(INTENT_FILTER_SMS_SENT), 0);
 
 		// Use SendMultipartTextMessage if the message requires it
 		int parts_size = manager.divideMessage(message).size();
@@ -128,9 +129,10 @@ public class Sms extends CordovaPlugin {
 				sentIntents.add(sentIntent);
 			}
 			manager.sendMultipartTextMessage(phoneNumber, null, parts,
-			sentIntents, null);
+					sentIntents, null);
 		} else {
-			manager.sendTextMessage(phoneNumber, null, message, sentIntent, null);
+			manager.sendTextMessage(phoneNumber, null, message, sentIntent,
+					null);
 		}
 	}
 
@@ -145,3 +147,4 @@ public class Sms extends CordovaPlugin {
 		}
 	}
 }
+
