@@ -1,4 +1,4 @@
-phonegap-sms-plugin
+cordova-sms-plugin
 =====================
 
 This Android Phonegap plugin allows you to easily send SMS in android using both native SMS Manager or by invoking the default android SMS app. This plugin works with PhoneGap 3.x version.
