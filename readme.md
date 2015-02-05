@@ -1,33 +1,34 @@
 cordova-sms-plugin
 =====================
 
-This Android Phonegap plugin allows you to easily send SMS in android using both native SMS Manager or by invoking the default android SMS app. This plugin works with PhoneGap 3.x version.
+This Cordova plugin allows you to easily send SMS in android, iOS, and Windows Phone 8. In Android you can use either the native SMS Manager or by invoking the default android SMS app.
 
-The Android portion was forked from https://github.com/javatechig/phonegap-sms-plugin by javatechig and then modified to upgrade it to phonegap 3.0.
-
-The iOS portion was copied from https://github.com/phonegap/phonegap-plugins by Jesse MacFadyen and then modified slightly to work with this plugin and phonegap 3.x.
+This plugin works with PhoneGap 3.x version.
 
 Installation
-=================
+============
 
-Using the Phonegap CLI run:
+Using the Cordova CLI, run:
 
-    phonegap local plugin add https://github.com/aharris88/phonegap-sms-plugin.git
+    cordova plugin add https://github.com/cordova-sms/cordova-sms-plugin.git
 
 This will place the plugin in your plugins directory and update your android.json file that keeps track of installed plugins.
 
 Then when you run:
 
-    phonegap build android
+    cordova build android
+
+
+    cordova run android
 
 or
 
-    phonegap install android
+    corcova emulate android
 
-phonegap will put the necessary files into the platforms/android directory. It will update AndroidManifest.xml, res/xml/config.xml, and it will add the src/org/apache/cordova/sms directory.
+Cordova will put the necessary files into the platforms/android directory. It will update AndroidManifest.xml, res/xml/config.xml, and it will add the src/org/apache/cordova/sms directory.
 
 Example Usage
-=================
+=============
 
 HTML
 
@@ -52,40 +53,14 @@ Javascript
     };
 
 Frequently Asked Questions
-=================
+==========================
 
-###I get this error. What's wrong?
-
-    compile:
-        [javac] Compiling 4 source files to /Users/username/MyProject/platforms/android/bin/classes
-        [javac] /Users/username/MyProject/platforms/android/src/org/apache/cordova/plugin/sms/Sms.java:15: cannot find symbol
-        [javac] symbol  : class Telephony
-        [javac] location: package android.provider
-        [javac] import android.provider.Telephony;
-        [javac]                        ^
-        [javac] /Users/username/MyProject/platforms/android/src/org/apache/cordova/plugin/sms/Sms.java:60: cannot find symbol
-        [javac] symbol  : variable KITKAT
-        [javac] location: class android.os.Build.VERSION_CODES
-        [javac]     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-        [javac]                                                    ^
-        [javac] /Users/username/MyProject/platforms/android/src/org/apache/cordova/plugin/sms/Sms.java:61: package Telephony does not exist
-        [javac]       String defaultSmsPackageName = Telephony.Sms.getDefaultSmsPackage(this.cordova.getActivity());
-        [javac]                                               ^
-        [javac] 3 errors
-
-    BUILD FAILED
-
-The problem is that you need to make sure that you set the target to android-19 or later in your ./platforms/android/project.properties file like this:
-
-    # Project target.
-    target=android-19
-
-###How can I send an sms in my iOS app without passing control to the native app like it can be done on Android?
+### How can I send an sms in my iOS app without passing control to the native app like it can be done on Android?
 
 This isn't possible on iOS. It requires that you show the user the native sms composer, to be able to send an sms.
 
 Contributing
-=================
+============
 
 I believe that everything is working, feel free to put in an issue or to fork and make pull requests if you want to add a new feature.
 
@@ -94,8 +69,17 @@ Things you can fix:
   Right now, it breaks when a null value is passed in for a number, but it works if it's a blank string, and allows the user to pick the number
   It should automatically convert a  null value to an empty string
 
+History
+=======
+
+The Android portion was forked from https://github.com/javatechig/phonegap-sms-plugin by javatechig and then modified to upgrade it to phonegap 3.0.
+
+The iOS portion was copied from https://github.com/phonegap/phonegap-plugins by Jesse MacFadyen and then modified slightly to work with this plugin and phonegap 3.x.
+
+The Windows Phone 8 part was contributed by [fredrikeldh](https://github.com/fredrikeldh)
+
 License
-=================
+=======
 
 The MIT License (MIT)
 
