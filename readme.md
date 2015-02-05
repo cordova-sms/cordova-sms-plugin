@@ -7,6 +7,11 @@ The Android portion was forked from https://github.com/javatechig/phonegap-sms-p
 
 The iOS portion was copied from https://github.com/phonegap/phonegap-plugins by Jesse MacFadyen and then modified slightly to work with this plugin and phonegap 3.x.
 
+New maintainers
+===============
+
+I'm currently not able to support this plugin, and I'm willing to hand it over to new maintainers. See [issue #53](https://github.com/aharris88/phonegap-sms-plugin/issues/53).
+
 Installation
 =================
 
