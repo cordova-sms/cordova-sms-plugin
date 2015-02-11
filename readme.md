@@ -1,35 +1,16 @@
-cordova-sms-plugin
-=====================
+#Cordova SMS Plugin
 
-This Cordova plugin allows you to easily send SMS in android, iOS, and Windows Phone 8. In Android you can use either the native SMS Manager or by invoking the default android SMS app.
+Cross-platform plugin for Cordova / PhoneGap to to easily send SMS. Available for **Android**, **iOS**, and **Windows Phone 8**.
 
-This plugin works with PhoneGap 3.x version.
+This plugin works with Cordova 3.x version. Cordova 4.x must be tested.
 
-Installation
-============
+##Installing the plugin
 
 Using the Cordova CLI, run:
 
     cordova plugin add https://github.com/cordova-sms/cordova-sms-plugin.git
 
-This will place the plugin in your plugins directory and update your android.json file that keeps track of installed plugins.
-
-Then when you run:
-
-    cordova build android
-
-
-    cordova run android
-
-or
-
-    corcova emulate android
-
-Cordova will put the necessary files into the platforms/android directory. It will update AndroidManifest.xml, res/xml/config.xml, and it will add the src/org/apache/cordova/sms directory.
-
-Example Usage
-=============
-
+##Using the plugin
 HTML
 
     <input name="" id="numberTxt" placeholder="Enter mobile number" value="" type="tel" />
@@ -52,10 +33,36 @@ Javascript
         }
     };
 
-Frequently Asked Questions
-==========================
+##FAQ
 
-### How can I send an sms in my iOS app without passing control to the native app like it can be done on Android?
+###I get this error. What's wrong?
+
+    compile:
+        [javac] Compiling 4 source files to /Users/username/MyProject/platforms/android/bin/classes
+        [javac] /Users/username/MyProject/platforms/android/src/org/apache/cordova/plugin/sms/Sms.java:15: cannot find symbol
+        [javac] symbol  : class Telephony
+        [javac] location: package android.provider
+        [javac] import android.provider.Telephony;
+        [javac]                        ^
+        [javac] /Users/username/MyProject/platforms/android/src/org/apache/cordova/plugin/sms/Sms.java:60: cannot find symbol
+        [javac] symbol  : variable KITKAT
+        [javac] location: class android.os.Build.VERSION_CODES
+        [javac]     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        [javac]                                                    ^
+        [javac] /Users/username/MyProject/platforms/android/src/org/apache/cordova/plugin/sms/Sms.java:61: package Telephony does not exist
+        [javac]       String defaultSmsPackageName = Telephony.Sms.getDefaultSmsPackage(this.cordova.getActivity());
+        [javac]                                               ^
+        [javac] 3 errors
+
+    BUILD FAILED
+
+The problem is that you need to make sure that you set the target to android-19 or later in your ./platforms/android/project.properties file like this:
+
+    # Project target.
+    target=android-19
+
+
+#### How can I send an sms in my iOS app without passing control to the native app like it can be done on Android?
 
 This isn't possible on iOS. It requires that you show the user the native sms composer, to be able to send an sms.
 
@@ -69,17 +76,51 @@ Things you can fix:
   Right now, it breaks when a null value is passed in for a number, but it works if it's a blank string, and allows the user to pick the number
   It should automatically convert a  null value to an empty string
 
-History
-=======
+Thanks for considering contributing to this project.
 
-The Android portion was forked from https://github.com/javatechig/phonegap-sms-plugin by javatechig and then modified to upgrade it to phonegap 3.0.
+### Finding something to do
 
-The iOS portion was copied from https://github.com/phonegap/phonegap-plugins by Jesse MacFadyen and then modified slightly to work with this plugin and phonegap 3.x.
+Ask, or pick an issue and comment on it announcing your desire to work on it. Ideally wait until we assign it to you to minimize work duplication.
 
-The Windows Phone 8 part was contributed by [fredrikeldh](https://github.com/fredrikeldh)
+### Reporting an issue
 
-License
-=======
+- Search existing issues before raising a new one.
+
+- Include as much detail as possible.
+
+### Pull requests
+
+- Make it clear in the issue tracker what you are working on, so that someone else doesn't duplicate the work.
+
+- Use a feature branch, not master.
+
+- Rebase your feature branch onto origin/master before raising the PR.
+
+- Keep up to date with changes in master so your PR is easy to merge.
+
+- Be descriptive in your PR message: what is it for, why is it needed, etc.
+
+- Make sure the tests pass
+
+- Squash related commits as much as possible.
+
+### Coding style
+
+- Try to match the existing indent style.
+
+- Don't mix platform-specific stuff into the main code.
+
+
+
+
+## History
+
+-  The Android portion was forked from https://github.com/javatechig/phonegap-sms-plugin by @javatechig and then modified to upgrade it to phonegap 3.0.
+- The iOS portion was copied from https://github.com/phonegap/phonegap-plugins by Jesse MacFadyen and then modified slightly to work with this plugin and phonegap 3.x by @aharris88.
+- The Windows Phone 8 part was contributed by [fredrikeldh](https://github.com/fredrikeldh)
+- This repository is now maintained by @dbaq.
+
+## License
 
 The MIT License (MIT)
 
