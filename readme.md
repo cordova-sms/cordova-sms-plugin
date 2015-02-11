@@ -2,7 +2,7 @@
 
 Cross-platform plugin for Cordova / PhoneGap to to easily send SMS. Available for **Android**, **iOS**, and **Windows Phone 8**.
 
-This plugin works with Cordova 3.x version. Cordova 4.x must be tested.
+This plugin works with Cordova 3.x and 4.x version.
 
 ##Installing the plugin
 
@@ -21,7 +21,6 @@ Javascript
 
     var app = {
         sendSms: function() {
-            alert('click');
             var number = document.getElementById('numberTxt').value;
             var message = document.getElementById('messageTxt').value;
             alert(number);
