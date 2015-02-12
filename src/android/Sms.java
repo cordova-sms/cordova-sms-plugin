@@ -23,8 +23,6 @@ public class Sms extends CordovaPlugin {
 	public final String ACTION_SEND_SMS = "send";
 	private static final String INTENT_FILTER_SMS_SENT = "SMS_SENT";
 
-	BroadcastReceiver receiver;
-
 	@Override
 	public boolean execute(String action, JSONArray args, final CallbackContext callbackContext) throws JSONException {
 
@@ -44,42 +42,7 @@ public class Sms extends CordovaPlugin {
 					// always passes success back to the app
 					callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
 				} else {
-					// by creating this broadcast receiver we can check whether or not the SMS was sent
-					if (receiver == null) {
-						this.receiver = new BroadcastReceiver() {
-							@Override
-							public void onReceive(Context context, Intent intent) {
-								PluginResult pluginResult;
-
-								switch (getResultCode()) {
-									case SmsManager.STATUS_ON_ICC_SENT:
-										pluginResult = new PluginResult(PluginResult.Status.OK);
-										pluginResult.setKeepCallback(true);
-										callbackContext.sendPluginResult(pluginResult);
-										break;
-									case Activity.RESULT_OK:
-										pluginResult = new PluginResult(PluginResult.Status.OK);
-										pluginResult.setKeepCallback(true);
-										callbackContext.sendPluginResult(pluginResult);
-										break;
-									case SmsManager.RESULT_ERROR_NO_SERVICE:
-										pluginResult = new PluginResult(PluginResult.Status.ERROR);
-										pluginResult.setKeepCallback(true);
-										callbackContext.sendPluginResult(pluginResult);
-										break;
-									default:
-										pluginResult = new PluginResult(PluginResult.Status.ERROR);
-										pluginResult.setKeepCallback(true);
-										callbackContext.sendPluginResult(pluginResult);
-										break;
-								}
-							}
-						};
-						final IntentFilter intentFilter = new IntentFilter();
-						intentFilter.addAction(INTENT_FILTER_SMS_SENT);
-						cordova.getActivity().registerReceiver(this.receiver, intentFilter);
-					}
-					send(phoneNumber, message);
+					send(callbackContext, phoneNumber, message);
 				}
 				return true;
 			} catch (JSONException ex) {
@@ -115,36 +78,58 @@ public class Sms extends CordovaPlugin {
 		this.cordova.getActivity().startActivity(sendIntent);
 	}
 
-	private void send(String phoneNumber, String message) {
+	private void send(final CallbackContext callbackContext, String phoneNumber, String message) {
 		SmsManager manager = SmsManager.getDefault();
-		PendingIntent sentIntent = PendingIntent.getBroadcast(this.cordova.getActivity(),
-			0, new Intent(INTENT_FILTER_SMS_SENT), 0);
+		final ArrayList<String> parts = manager.divideMessage(message);
 
-		// Use SendMultipartTextMessage if the message requires it
-		int parts_size = manager.divideMessage(message).size();
-		if (parts_size > 1) {
-			ArrayList<String> parts = manager.divideMessage(message);
+		// by creating this broadcast receiver we can check whether or not the SMS was sent			
+		final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+				
+			boolean anyError = false; //use to detect if one of the parts failed
+			int partsCount = parts.size(); //number of parts to send
+
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				switch (getResultCode()) {
+				case SmsManager.STATUS_ON_ICC_SENT:
+				case Activity.RESULT_OK:
+					break;
+				case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
+				case SmsManager.RESULT_ERROR_NO_SERVICE:
+				case SmsManager.RESULT_ERROR_NULL_PDU:
+				case SmsManager.RESULT_ERROR_RADIO_OFF:
+					anyError = true;
+					break;
+				}
+				// trigger the callback only when all the parts have been sent
+				partsCount--;
+				if (partsCount == 0) {
+					if (anyError) {
+						callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR));
+					} else {
+						callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
+					}
+					cordova.getActivity().unregisterReceiver(this);
+				}
+			}
+		};
+
+		// randomize the intent filter action to avoid using the same receiver
+		String intentFilterAction = INTENT_FILTER_SMS_SENT + java.util.UUID.randomUUID().toString();
+		this.cordova.getActivity().registerReceiver(broadcastReceiver, new IntentFilter(intentFilterAction));
+
+		PendingIntent sentIntent = PendingIntent.getBroadcast(this.cordova.getActivity(), 0, new Intent(intentFilterAction), 0);
+
+		// depending on the number of parts we send a text message or multi parts
+		if (parts.size() > 1) {
 			ArrayList<PendingIntent> sentIntents = new ArrayList<PendingIntent>();
-			for (int i = 0; i < parts_size; ++i) {
+			for (int i = 0; i < parts.size(); i++) {
 				sentIntents.add(sentIntent);
 			}
-			manager.sendMultipartTextMessage(phoneNumber, null, parts,
-					sentIntents, null);
-		} else {
-			manager.sendTextMessage(phoneNumber, null, message, sentIntent,
-					null);
+			manager.sendMultipartTextMessage(phoneNumber, null, parts, sentIntents, null);
 		}
-	}
-
-	@Override
-	public void onDestroy() {
-		if (this.receiver != null) {
-			try {
-				this.cordova.getActivity().unregisterReceiver(this.receiver);
-				this.receiver = null;
-			} catch (Exception ignore) {
-			}
+		else {
+			manager.sendTextMessage(phoneNumber, null, message, sentIntent, null);
 		}
 	}
 }
-
