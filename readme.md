@@ -27,7 +27,7 @@ Javascript
             alert(message);
             
             //ANDROID CONFIGURATION ONLY
-            var intent = 'INTENT'; // native android SMS messaging
+            var intent = 'INTENT'; // send SMS with the native android SMS messaging
             //var intent = ''; // send SMS without open any other app
             
             var success = function () { alert('Message sent successfully'); };
