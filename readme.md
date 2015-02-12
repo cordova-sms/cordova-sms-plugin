@@ -13,8 +13,8 @@ Using the Cordova CLI, run:
 ##Using the plugin
 HTML
 
-    <input name="" id="numberTxt" placeholder="Enter mobile number" value="" type="tel" />
-    <textarea name="" id="messageTxt" placeholder="Enter message"></textarea>
+    <input id="numberTxt" placeholder="Enter mobile number" value="" type="tel" />
+    <textarea id="messageTxt" placeholder="Enter message"></textarea>
     <input type="button" onclick="app.sendSms()" value="Send SMS" />
 
 Javascript
@@ -25,7 +25,11 @@ Javascript
             var message = document.getElementById('messageTxt').value;
             alert(number);
             alert(message);
-            var intent = 'INTENT'; //leave empty for sending sms using default intent
+            
+            //ANDROID CONFIGURATION ONLY
+            var intent = 'INTENT'; // native android SMS messaging
+            //var intent = ''; // send SMS without open any other app
+            
             var success = function () { alert('Message sent successfully'); };
             var error = function (e) { alert('Message Failed:' + e); };
             sms.send(number, message, intent, success, error);
