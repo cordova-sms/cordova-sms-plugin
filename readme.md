@@ -25,14 +25,18 @@ Javascript
             var message = document.getElementById('messageTxt').value;
             alert(number);
             alert(message);
-            
-            //ANDROID CONFIGURATION ONLY
-            var intent = 'INTENT'; // send SMS with the native android SMS messaging
-            //var intent = ''; // send SMS without open any other app
-            
+  
+            //CONFIGURATION
+            var options = {
+                android: {
+                    intent: 'INTENT'  // send SMS with the native android SMS messaging
+                    //intent: '' // send SMS without open any other app
+                }
+            };
+
             var success = function () { alert('Message sent successfully'); };
             var error = function (e) { alert('Message Failed:' + e); };
-            sms.send(number, message, intent, success, error);
+            sms.send(number, message, options, success, error);
         }
     };
 
