@@ -28,9 +28,16 @@ public class Sms extends CordovaPlugin {
 
 		if (action.equals(ACTION_SEND_SMS)) {
 			try {
+				//parsing arguments
 				String phoneNumber = args.getJSONArray(0).join(";").replace("\"", "");
 				String message = args.getString(1);
 				String method = args.getString(2);
+				boolean replaceLineBreaks = Boolean.parseBoolean(args.getString(3));
+
+				// replacing \n by new line if the parameter replaceLineBreaks is set to true
+				if (replaceLineBreaks) {
+					message = message.replace("\\n", System.getProperty("line.separator"));
+				}
 
 				if (!checkSupport()) {
 					callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, "SMS not supported on this platform"));
