@@ -29,6 +29,10 @@
     
     NSString* body = [command.arguments objectAtIndex:1];
     if (body != nil) {
+        BOOL replaceLineBreaks = [[command.arguments objectAtIndex:3] boolValue];
+        if (replaceLineBreaks) {
+            body = [body stringByReplacingOccurrencesOfString: @"\\n" withString: @"\n"];
+        }
         [composeViewController setBody:body];
     }
     
