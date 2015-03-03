@@ -1,4 +1,4 @@
-package org.apache.cordova.plugin.sms;
+package com.cordova.plugins.sms;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
