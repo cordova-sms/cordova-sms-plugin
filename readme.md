@@ -43,6 +43,10 @@ Javascript
 
 ##FAQ
 
+###Is the plugin available on [Adobe PhoneGap Build](https://build.phonegap.com)?
+
+Yes, the plugin is available, please see instructions here: https://build.phonegap.com/plugins/1999.
+
 ###I get this error. What's wrong?
 
     compile:
