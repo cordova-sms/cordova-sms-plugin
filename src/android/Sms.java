@@ -27,34 +27,38 @@ public class Sms extends CordovaPlugin {
 	public boolean execute(String action, JSONArray args, final CallbackContext callbackContext) throws JSONException {
 
 		if (action.equals(ACTION_SEND_SMS)) {
-			try {
-				//parsing arguments
-				String phoneNumber = args.getJSONArray(0).join(";").replace("\"", "");
-				String message = args.getString(1);
-				String method = args.getString(2);
-				boolean replaceLineBreaks = Boolean.parseBoolean(args.getString(3));
+            		cordova.getThreadPool().execute(new Runnable() {
+                		@Override
+                		public void run() {
+                    			try {
+                        			//parsing arguments
+                        			String phoneNumber = args.getJSONArray(0).join(";").replace("\"", "");
+                        			String message = args.getString(1);
+                        			String method = args.getString(2);
+                        			boolean replaceLineBreaks = Boolean.parseBoolean(args.getString(3));
 
-				// replacing \n by new line if the parameter replaceLineBreaks is set to true
-				if (replaceLineBreaks) {
-					message = message.replace("\\n", System.getProperty("line.separator"));
-				}
-
-				if (!checkSupport()) {
-					callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, "SMS not supported on this platform"));
-					return true;
-				}
-
-				if (method.equalsIgnoreCase("INTENT")) {
-					invokeSMSIntent(phoneNumber, message);
-					// always passes success back to the app
-					callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
-				} else {
-					send(callbackContext, phoneNumber, message);
-				}
-				return true;
-			} catch (JSONException ex) {
-				callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
-			}
+                        			// replacing \n by new line if the parameter replaceLineBreaks is set to true
+                        			if (replaceLineBreaks) {
+                            				message = message.replace("\\n", System.getProperty("line.separator"));
+                        			}
+                        			if (!checkSupport()) {
+                            				callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, "SMS not supported on this platform"));
+                            				return;
+                        			}
+                        			if (method.equalsIgnoreCase("INTENT")) {
+                            				invokeSMSIntent(phoneNumber, message);
+                            				// always passes success back to the app
+                            				callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
+                        			} else {
+                            				send(callbackContext, phoneNumber, message);
+                        			}
+                        			return;
+                    			} catch (JSONException ex) {
+                        			callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
+                    			}
+                		}
+            		});
+            		return true;
 		}
 		return false;
 	}
