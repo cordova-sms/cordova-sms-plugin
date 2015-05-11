@@ -24,7 +24,7 @@ public class Sms extends CordovaPlugin {
 	private static final String INTENT_FILTER_SMS_SENT = "SMS_SENT";
 
 	@Override
-	public boolean execute(String action, JSONArray args, final CallbackContext callbackContext) throws JSONException {
+	public boolean execute(String action, final JSONArray args, final CallbackContext callbackContext) throws JSONException {
 
 		if (action.equals(ACTION_SEND_SMS)) {
             		cordova.getThreadPool().execute(new Runnable() {
