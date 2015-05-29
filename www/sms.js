@@ -4,9 +4,13 @@ var exec = require('cordova/exec');
 
 var sms = function() {
 
+    var isArray = function(o) {
+        return Object.prototype.toString.call(o) === '[object Array]';
+    };
+
     var parseOptions = function(options) {
         var opts = {
-            attachments: null,
+            attachments: [],
             replaceLineBreaks: false,
             android: {
                 intent: 'INTENT'
@@ -18,7 +22,7 @@ var sms = function() {
             opts.android.intent = options;
         } else if (typeof options === 'object') {
             opts.replaceLineBreaks = options.replaceLineBreaks || false;
-            opts.attachments = options.attachments || false;
+            opts.attachments = isArray(options.attachments) ? options.attachments : [];
             if (options.android && typeof options.android === 'object') {
                 opts.android.intent = options.android.intent;
             }
