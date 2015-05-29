@@ -9,42 +9,60 @@
     return self;
 }
 
-- (void)send:(CDVInvokedUrlCommand*)command {
-    
-    self.callbackID = command.callbackId;
-    
-    if(![MFMessageComposeViewController canSendText]) {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Notice"
-                                                        message:@"SMS Text not available."
-                                                       delegate:self
-                                              cancelButtonTitle:@"OK"
-                                              otherButtonTitles:nil
-                              ];
-        [alert show];
-        return;
+
+- (bool)isSMSAvailable {
+    Class messageClass = (NSClassFromString(@"MFMessageComposeViewController"));
+    return messageClass != nil && [messageClass canSendText];
+}
+
+- (bool)isMMSAvailable {
+    return [self isSMSAvailable] && [(NSClassFromString(@"MFMessageComposeViewController")) respondsToSelector:@selector(canSendAttachments)];
+}
+
+- (NSString *)parseBody:(NSString*)body replaceLineBreaks:(BOOL)replaceLineBreaks {
+    return (body != nil && replaceLineBreaks) ? [body stringByReplacingOccurrencesOfString: @"\\n" withString: @"\n"] : body;
+}
+
+- (NSMutableArray *)parseRecipients:(NSObject*)param {
+    NSMutableArray *recipients = [[NSMutableArray alloc] init];
+    if (![param isKindOfClass:[NSNull class]] && [param isKindOfClass:[NSString class]]) {
+        [recipients addObject:[NSString stringWithFormat:@"%@", param]];
     }
-    
+    return recipients;
+}
+
+- (void)send:(CDVInvokedUrlCommand*)command {
+    self.callbackID = command.callbackId;
+
+    // test SMS availability
+    if(![self isSMSAvailable]) {
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"SMS_NOT_AVAILABLE"];
+        return [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackID];
+    }
+
+    // retrieve the options dictionnary
+    NSDictionary* options = [command.arguments objectAtIndex:2];
+    // parse the body parameter
+    NSString *body = [self parseBody:[command.arguments objectAtIndex:1] replaceLineBreaks:[[options objectForKey:@"replaceLineBreaks"]  boolValue]];
+    // parse the recipients parameter
+    NSMutableArray *recipients = (![[command.arguments objectAtIndex:0] isKindOfClass:[NSMutableArray class]]) ? [command.arguments objectAtIndex:0] : [self parseRecipients:[command.arguments objectAtIndex:0]];
+        
+    // initialize the composer
     MFMessageComposeViewController *composeViewController = [[MFMessageComposeViewController alloc] init];
     composeViewController.messageComposeDelegate = self;
-    
-    NSString* body = [command.arguments objectAtIndex:1];
-    if (body != nil) {
-        BOOL replaceLineBreaks = [[command.arguments objectAtIndex:3] boolValue];
-        if (replaceLineBreaks) {
-            body = [body stringByReplacingOccurrencesOfString: @"\\n" withString: @"\n"];
-        }
-        [composeViewController setBody:body];
-    }
-    
-    NSMutableArray* recipients = [command.arguments objectAtIndex:0];
     if (recipients != nil) {
-        if ([recipients.firstObject isEqual: @""]) {
+        if ([recipients.firstObject isEqual: @""]) { // http://stackoverflow.com/questions/19951040/mfmessagecomposeviewcontroller-opens-mms-editing-instead-of-sms-and-buddy-name
             [recipients replaceObjectAtIndex:0 withObject:@"?"];
         }
         
         [composeViewController setRecipients:recipients];
     }
-    
+    // append the body the composer
+    if (body != nil) {
+        [composeViewController setBody:body];
+    }
+
+    // fire the composer
     [self.viewController presentViewController:composeViewController animated:YES completion:nil];
 }
 
