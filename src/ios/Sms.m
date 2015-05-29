@@ -1,5 +1,4 @@
 #import "Sms.h"
-#import <Cordova/NSArray+Comparisons.h>
 
 @implementation Sms
 @synthesize callbackID;
@@ -15,8 +14,8 @@
     return messageClass != nil && [messageClass canSendText];
 }
 
-- (bool)isMMSAvailable {
-    return [self isSMSAvailable] && [(NSClassFromString(@"MFMessageComposeViewController")) respondsToSelector:@selector(canSendAttachments)];
+- (bool)areAttachmentsAvailable {
+    return [(NSClassFromString(@"MFMessageComposeViewController")) respondsToSelector:@selector(canSendAttachments)];
 }
 
 - (NSString *)parseBody:(NSString*)body replaceLineBreaks:(BOOL)replaceLineBreaks {
@@ -29,6 +28,54 @@
         [recipients addObject:[NSString stringWithFormat:@"%@", param]];
     }
     return recipients;
+}
+
+// shamelessly copied from https://github.com/EddyVerbruggen/SocialSharing-PhoneGap-Plugin/blob/master/src/ios/SocialSharing.m#L557
+-(NSURL *)getFile: (NSString *)fileName {
+    NSURL *file = nil;
+    if (fileName != (id)[NSNull null]) {
+        if ([fileName hasPrefix:@"http"]) {
+            NSURL *url = [NSURL URLWithString:fileName];
+            NSData *fileData = [NSData dataWithContentsOfURL:url];
+            file = [NSURL fileURLWithPath:[self storeInFile:(NSString*)[[fileName componentsSeparatedByString: @"/"] lastObject] fileData:fileData]];
+        } else if ([fileName hasPrefix:@"www/"]) {
+            NSString *bundlePath = [[NSBundle mainBundle] bundlePath];
+            NSString *fullPath = [NSString stringWithFormat:@"%@/%@", bundlePath, fileName];
+            file = [NSURL fileURLWithPath:fullPath];
+        } else if ([fileName hasPrefix:@"file://"]) {
+            // stripping the first 6 chars, because the path should start with / instead of file://
+            file = [NSURL fileURLWithPath:[fileName substringFromIndex:6]];
+        } else if ([fileName hasPrefix:@"data:"]) {
+            // using a base64 encoded string
+            // extract some info from the 'fileName', which is for example: data:text/calendar;base64,<encoded stuff here>
+            NSString *fileType = (NSString*)[[[fileName substringFromIndex:5] componentsSeparatedByString: @";"] objectAtIndex:0];
+            fileType = (NSString*)[[fileType componentsSeparatedByString: @"/"] lastObject];
+            NSString *base64content = (NSString*)[[fileName componentsSeparatedByString: @","] lastObject];
+            NSData *fileData = [NSData dataFromBase64String:base64content];
+            file = [NSURL fileURLWithPath:[self storeInFile:[NSString stringWithFormat:@"%@.%@", @"file", fileType] fileData:fileData]];
+        } else {
+            // assume anywhere else, on the local filesystem
+            file = [NSURL fileURLWithPath:fileName];
+        }
+    }
+    return file;
+}
+
+// shamelessly copied from https://github.com/EddyVerbruggen/SocialSharing-PhoneGap-Plugin/blob/master/src/ios/SocialSharing.m#L587
+-(NSString *) storeInFile: (NSString*) fileName fileData: (NSData*) fileData {
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *filePath = [documentsDirectory stringByAppendingPathComponent:fileName];
+    [fileData writeToFile:filePath atomically:YES];
+    _tempStoredFile = filePath;
+    return filePath;
+}
+
+- (void) cleanupStoredFiles {
+  if (_tempStoredFile != nil) {
+    NSError *error;
+    [[NSFileManager defaultManager]removeItemAtPath:_tempStoredFile error:&error];
+  }
 }
 
 - (void)send:(CDVInvokedUrlCommand*)command {
@@ -46,10 +93,14 @@
     NSString *body = [self parseBody:[command.arguments objectAtIndex:1] replaceLineBreaks:[[options objectForKey:@"replaceLineBreaks"]  boolValue]];
     // parse the recipients parameter
     NSMutableArray *recipients = (![[command.arguments objectAtIndex:0] isKindOfClass:[NSMutableArray class]]) ? [command.arguments objectAtIndex:0] : [self parseRecipients:[command.arguments objectAtIndex:0]];
+    // parse the attachments
+    NSArray *attachments = [options objectForKey:@"attachments"];
         
     // initialize the composer
     MFMessageComposeViewController *composeViewController = [[MFMessageComposeViewController alloc] init];
     composeViewController.messageComposeDelegate = self;
+
+    // add recipients
     if (recipients != nil) {
         if ([recipients.firstObject isEqual: @""]) { // http://stackoverflow.com/questions/19951040/mfmessagecomposeviewcontroller-opens-mms-editing-instead-of-sms-and-buddy-name
             [recipients replaceObjectAtIndex:0 withObject:@"?"];
@@ -57,9 +108,24 @@
         
         [composeViewController setRecipients:recipients];
     }
-    // append the body the composer
+    // append the body to the composer
     if (body != nil) {
         [composeViewController setBody:body];
+    }
+
+    // append attachments
+    if (attachments != nil && [attachments count] > 0) {
+        if(![self areAttachmentsAvailable]) {
+            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"MMS_NOT_AVAILABLE"];
+            return [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackID];
+        }
+        
+        for (id attachment in attachments) {
+            NSURL *file = [self getFile:attachment];
+            if (file != nil) {
+                [composeViewController addAttachmentURL:file withAlternateFilename:nil];
+            }
+        }
     }
 
     // fire the composer
@@ -94,6 +160,8 @@
     
     [self.viewController dismissViewControllerAnimated:YES completion:nil];
     
+
+    [self cleanupStoredFiles];
     if(webviewResult == 1) {
         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
                                                           messageAsString:message];
