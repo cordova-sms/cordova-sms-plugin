@@ -22,10 +22,15 @@
     return (body != nil && replaceLineBreaks) ? [body stringByReplacingOccurrencesOfString: @"\\n" withString: @"\n"] : body;
 }
 
-- (NSMutableArray *)parseRecipients:(NSObject*)param {
+- (NSMutableArray *)parseRecipients:(id)param {
     NSMutableArray *recipients = [[NSMutableArray alloc] init];
-    if (![param isKindOfClass:[NSNull class]] && [param isKindOfClass:[NSString class]]) {
-        [recipients addObject:[NSString stringWithFormat:@"%@", param]];
+    if (![param isKindOfClass:[NSNull class]]) {
+        if ([param isKindOfClass:[NSString class]]) {
+            [recipients addObject:[NSString stringWithFormat:@"%@", param]];
+        }
+        else if ([param isKindOfClass:[NSMutableArray class]]) {
+            recipients = param;
+        }
     }
     return recipients;
 }
@@ -92,7 +97,7 @@
     // parse the body parameter
     NSString *body = [self parseBody:[command.arguments objectAtIndex:1] replaceLineBreaks:[[options objectForKey:@"replaceLineBreaks"]  boolValue]];
     // parse the recipients parameter
-    NSMutableArray *recipients = (![[command.arguments objectAtIndex:0] isKindOfClass:[NSMutableArray class]]) ? [command.arguments objectAtIndex:0] : [self parseRecipients:[command.arguments objectAtIndex:0]];
+    NSMutableArray *recipients = [self parseRecipients:[command.arguments objectAtIndex:0]];
     // parse the attachments
     NSArray *attachments = [options objectForKey:@"attachments"];
         
