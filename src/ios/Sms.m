@@ -111,9 +111,8 @@
         composeViewController.messageComposeDelegate = self;
 
         // add recipients
-        if (recipients != nil) {
-            [composeViewController setRecipients:recipients];
-        }
+        [composeViewController setRecipients:recipients];
+        
         // append the body to the composer
         if ((id)body != [NSNull null]) {
             [composeViewController setBody:body];
