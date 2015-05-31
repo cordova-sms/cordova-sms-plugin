@@ -145,43 +145,33 @@
 // Dismisses the composition interface when users tap Cancel or Send. Proceeds to update the message field with the result of the operation.
 - (void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result {
     // Notifies users about errors associated with the interface
-    int webviewResult = 0;
+    CDVCommandStatus* status = CDVCommandStatus_ERROR;
     NSString* message = @"";
     
     switch(result) {
         case MessageComposeResultCancelled:
-            webviewResult = 0;
-            message = @"Message cancelled.";
+            message = @"CANCELLED";
             break;
         case MessageComposeResultSent:
-            webviewResult = 1;
-            message = @"Message sent.";
+            status = CDVCommandStatus_OK;
+            message = @"SENT";
             break;
         case MessageComposeResultFailed:
-            webviewResult = 2;
-            message = @"Message failed.";
+            message = @"FAILED";
             break;
         default:
-            webviewResult = 3;
-            message = @"Unknown error.";
+            message = @"UNKNOWN_ERROR";
             break;
     }
     
     [self.viewController dismissViewControllerAnimated:YES completion:nil];
     
-
+    // clean up stored files
     [self cleanupStoredFiles];
-    if(webviewResult == 1) {
-        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
-                                                          messageAsString:message];
         
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackID];
-    } else {
-        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
-                                                          messageAsString:message];
-
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackID];
-    }
+    // send the result
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:status messageAsString:message];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackID];
 }
 
 @end
