@@ -17,6 +17,10 @@ var sms = function() {
             }
         };
 
+        if (options === null) {
+            return opts;
+        }
+
         if (typeof options === 'string') { // ensuring backward compatibility
             window.console.warn('[DEPRECATED] Passing a string as a third argument is deprecated. Please refer to the documentation to pass the right parameter: https://github.com/cordova-sms/cordova-sms-plugin.');
             opts.android.intent = options;
