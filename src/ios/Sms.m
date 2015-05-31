@@ -31,6 +31,11 @@
         else if ([param isKindOfClass:[NSMutableArray class]]) {
             recipients = param;
         }
+        
+        // http://stackoverflow.com/questions/19951040/mfmessagecomposeviewcontroller-opens-mms-editing-instead-of-sms-and-buddy-name
+        if ([recipients.firstObject isEqual: @""]) {
+            [recipients replaceObjectAtIndex:0 withObject:@"?"];
+        }
     }
     return recipients;
 }
@@ -109,10 +114,6 @@
 
         // add recipients
         if (recipients != nil) {
-            if ([recipients.firstObject isEqual: @""]) { // http://stackoverflow.com/questions/19951040/mfmessagecomposeviewcontroller-opens-mms-editing-instead-of-sms-and-buddy-name
-                [recipients replaceObjectAtIndex:0 withObject:@"?"];
-            }
-            
             [composeViewController setRecipients:recipients];
         }
         // append the body to the composer
