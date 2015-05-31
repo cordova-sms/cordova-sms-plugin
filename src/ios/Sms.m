@@ -8,7 +8,6 @@
     return self;
 }
 
-
 - (bool)isSMSAvailable {
     Class messageClass = (NSClassFromString(@"MFMessageComposeViewController"));
     return messageClass != nil && [messageClass canSendText];
@@ -31,7 +30,7 @@
         else if ([param isKindOfClass:[NSMutableArray class]]) {
             recipients = param;
         }
-        
+
         // http://stackoverflow.com/questions/19951040/mfmessagecomposeviewcontroller-opens-mms-editing-instead-of-sms-and-buddy-name
         if ([recipients.firstObject isEqual: @""]) {
             [recipients replaceObjectAtIndex:0 withObject:@"?"];
@@ -72,7 +71,7 @@
 }
 
 // shamelessly copied from https://github.com/EddyVerbruggen/SocialSharing-PhoneGap-Plugin/blob/master/src/ios/SocialSharing.m#L587
--(NSString *) storeInFile: (NSString*) fileName fileData: (NSData*) fileData {
+-(NSString *)storeInFile: (NSString*) fileName fileData: (NSData*) fileData {
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
     NSString *filePath = [documentsDirectory stringByAppendingPathComponent:fileName];
@@ -81,7 +80,7 @@
     return filePath;
 }
 
-- (void) cleanupStoredFiles {
+- (void)cleanupStoredFiles {
   if (_tempStoredFile != nil) {
     NSError *error;
     [[NSFileManager defaultManager]removeItemAtPath:_tempStoredFile error:&error];
@@ -90,7 +89,6 @@
 
 - (void)send:(CDVInvokedUrlCommand*)command {
     self.callbackID = command.callbackId;
-
 
     [self.commandDelegate runInBackground:^{
         // test SMS availability
