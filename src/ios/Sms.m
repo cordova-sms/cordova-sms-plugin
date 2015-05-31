@@ -86,55 +86,59 @@
 - (void)send:(CDVInvokedUrlCommand*)command {
     self.callbackID = command.callbackId;
 
-    // test SMS availability
-    if(![self isSMSAvailable]) {
-        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"SMS_NOT_AVAILABLE"];
-        return [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackID];
-    }
 
-    // retrieve the options dictionnary
-    NSDictionary* options = [command.arguments objectAtIndex:2];
-    // parse the body parameter
-    NSString *body = [self parseBody:[command.arguments objectAtIndex:1] replaceLineBreaks:[[options objectForKey:@"replaceLineBreaks"]  boolValue]];
-    // parse the recipients parameter
-    NSMutableArray *recipients = [self parseRecipients:[command.arguments objectAtIndex:0]];
-    // parse the attachments
-    NSArray *attachments = [options objectForKey:@"attachments"];
-        
-    // initialize the composer
-    MFMessageComposeViewController *composeViewController = [[MFMessageComposeViewController alloc] init];
-    composeViewController.messageComposeDelegate = self;
-
-    // add recipients
-    if (recipients != nil) {
-        if ([recipients.firstObject isEqual: @""]) { // http://stackoverflow.com/questions/19951040/mfmessagecomposeviewcontroller-opens-mms-editing-instead-of-sms-and-buddy-name
-            [recipients replaceObjectAtIndex:0 withObject:@"?"];
-        }
-        
-        [composeViewController setRecipients:recipients];
-    }
-    // append the body to the composer
-    if (body != nil) {
-        [composeViewController setBody:body];
-    }
-
-    // append attachments
-    if (attachments != nil && [attachments count] > 0) {
-        if(![self areAttachmentsAvailable]) {
-            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"MMS_NOT_AVAILABLE"];
+    [self.commandDelegate runInBackground:^{
+        // test SMS availability
+        if(![self isSMSAvailable]) {
+            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"SMS_NOT_AVAILABLE"];
             return [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackID];
         }
-        
-        for (id attachment in attachments) {
-            NSURL *file = [self getFile:attachment];
-            if (file != nil) {
-                [composeViewController addAttachmentURL:file withAlternateFilename:nil];
+
+        // retrieve the options dictionnary
+        NSDictionary* options = [command.arguments objectAtIndex:2];
+        // parse the body parameter
+        NSString *body = [self parseBody:[command.arguments objectAtIndex:1] replaceLineBreaks:[[options objectForKey:@"replaceLineBreaks"]  boolValue]];
+        // parse the recipients parameter
+        NSMutableArray *recipients = [self parseRecipients:[command.arguments objectAtIndex:0]];
+        // parse the attachments
+        NSArray *attachments = [options objectForKey:@"attachments"];
+            
+        // initialize the composer
+        MFMessageComposeViewController *composeViewController = [[MFMessageComposeViewController alloc] init];
+        composeViewController.messageComposeDelegate = self;
+
+        // add recipients
+        if (recipients != nil) {
+            if ([recipients.firstObject isEqual: @""]) { // http://stackoverflow.com/questions/19951040/mfmessagecomposeviewcontroller-opens-mms-editing-instead-of-sms-and-buddy-name
+                [recipients replaceObjectAtIndex:0 withObject:@"?"];
+            }
+            
+            [composeViewController setRecipients:recipients];
+        }
+        // append the body to the composer
+        if (body != nil) {
+            [composeViewController setBody:body];
+        }
+
+        // append attachments
+        if (attachments != nil && [attachments count] > 0) {
+            if(![self areAttachmentsAvailable]) {
+                CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"MMS_NOT_AVAILABLE"];
+                return [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackID];
+            }
+            
+            for (id attachment in attachments) {
+                NSURL *file = [self getFile:attachment];
+                if (file != nil) {
+                    [composeViewController addAttachmentURL:file withAlternateFilename:nil];
+                }
             }
         }
-    }
 
-    // fire the composer
-    [self.viewController presentViewController:composeViewController animated:YES completion:nil];
+        // fire the composer
+        [self.viewController presentViewController:composeViewController animated:YES completion:nil];
+    }];
+    
 }
 
 #pragma mark - MFMessageComposeViewControllerDelegate Implementation
