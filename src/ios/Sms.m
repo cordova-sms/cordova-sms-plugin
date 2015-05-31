@@ -18,7 +18,7 @@
 }
 
 - (NSString *)parseBody:(NSString*)body replaceLineBreaks:(BOOL)replaceLineBreaks {
-    return (body != nil && replaceLineBreaks) ? [body stringByReplacingOccurrencesOfString: @"\\n" withString: @"\n"] : body;
+    return ((id)body != [NSNull null] && replaceLineBreaks) ? [body stringByReplacingOccurrencesOfString: @"\\n" withString: @"\n"] : body;
 }
 
 - (NSMutableArray *)parseRecipients:(id)param {
@@ -115,7 +115,7 @@
             [composeViewController setRecipients:recipients];
         }
         // append the body to the composer
-        if (body != nil) {
+        if ((id)body != [NSNull null]) {
             [composeViewController setBody:body];
         }
 
