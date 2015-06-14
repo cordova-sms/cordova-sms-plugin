@@ -37,7 +37,7 @@ public class Sms extends CordovaPlugin {
 							// See http://stackoverflow.com/questions/18974898/send-sms-through-intent-to-multiple-phone-numbers/18975676#18975676
 							separator = ",";
 						}
-						String phoneNumber = phoneNumbers.join(separator).replace("\"", "");
+						String phoneNumber = args.getJSONArray(0).join(separator).replace("\"", "");
                         			String message = args.getString(1);
                         			String method = args.getString(2);
                         			boolean replaceLineBreaks = Boolean.parseBoolean(args.getString(3));
