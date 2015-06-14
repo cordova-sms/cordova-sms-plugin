@@ -90,7 +90,7 @@ public class Sms extends CordovaPlugin {
 			sendIntent = new Intent(Intent.ACTION_VIEW);
 			sendIntent.putExtra("sms_body", message);
 			// See http://stackoverflow.com/questions/7242190/sending-sms-using-intent-does-not-add-recipients-on-some-devices
-			sendIntent.putExtra("address", Uri.encode(phoneNumber));
+			sendIntent.putExtra("address", phoneNumber);
 			sendIntent.setData(Uri.parse("smsto:" + Uri.encode(phoneNumber)));
 		}
 		this.cordova.getActivity().startActivity(sendIntent);
