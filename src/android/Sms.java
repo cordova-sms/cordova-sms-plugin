@@ -32,7 +32,12 @@ public class Sms extends CordovaPlugin {
                 		public void run() {
                     			try {
                         			//parsing arguments
-                        			String phoneNumber = args.getJSONArray(0).join(";").replace("\"", "");
+						String separator = ";";
+						if (android.os.Build.MANUFACTURER.equalsIgnoreCase("Samsung")) {
+							// See http://stackoverflow.com/questions/18974898/send-sms-through-intent-to-multiple-phone-numbers/18975676#18975676
+							separator = ",";
+						}
+						String phoneNumber = args.getJSONArray(0).join(separator).replace("\"", "");
                         			String message = args.getString(1);
                         			String method = args.getString(2);
                         			boolean replaceLineBreaks = Boolean.parseBoolean(args.getString(3));
@@ -46,7 +51,7 @@ public class Sms extends CordovaPlugin {
                             				return;
                         			}
                         			if (method.equalsIgnoreCase("INTENT")) {
-                            				invokeSMSIntent(phoneNumber, message);
+							invokeSMSIntent(phoneNumber, message);
                             				// always passes success back to the app
                             				callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
                         			} else {
@@ -83,8 +88,10 @@ public class Sms extends CordovaPlugin {
 			}
 		} else {
 			sendIntent = new Intent(Intent.ACTION_VIEW);
-			sendIntent.setData(Uri.parse("smsto:" + Uri.encode(phoneNumber)));
 			sendIntent.putExtra("sms_body", message);
+			// See http://stackoverflow.com/questions/7242190/sending-sms-using-intent-does-not-add-recipients-on-some-devices
+			sendIntent.putExtra("address", phoneNumber);
+			sendIntent.setData(Uri.parse("smsto:" + Uri.encode(phoneNumber)));
 		}
 		this.cordova.getActivity().startActivity(sendIntent);
 	}
@@ -93,9 +100,9 @@ public class Sms extends CordovaPlugin {
 		SmsManager manager = SmsManager.getDefault();
 		final ArrayList<String> parts = manager.divideMessage(message);
 
-		// by creating this broadcast receiver we can check whether or not the SMS was sent			
+		// by creating this broadcast receiver we can check whether or not the SMS was sent
 		final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-				
+
 			boolean anyError = false; //use to detect if one of the parts failed
 			int partsCount = parts.size(); //number of parts to send
 
