@@ -21,7 +21,9 @@
                                                   otherButtonTitles:nil
                                   ];
 
-            [alert show];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [alert show];
+            });
             return;
         }
         
@@ -45,8 +47,9 @@
             
             [composeViewController setRecipients:recipients];
         }
-        
-        [self.viewController presentViewController:composeViewController animated:YES completion:nil];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.viewController presentViewController:composeViewController animated:YES completion:nil];
+        });
     }];
 }
 
