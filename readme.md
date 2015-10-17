@@ -6,7 +6,11 @@ This plugin works with Cordova 3.x, 4.x and 5.x version.
 
 ##Installing the plugin
 
-Using the Cordova CLI, run:
+Using the Cordova CLI and NPM, run:
+
+    cordova plugin add cordova-sms-plugin
+
+It is also possible to install via repo url directly (unstable), run :
 
     cordova plugin add https://github.com/cordova-sms/cordova-sms-plugin.git
 
