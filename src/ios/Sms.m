@@ -1,13 +1,7 @@
 #import "Sms.h"
-#import <Cordova/NSArray+Comparisons.h>
 
 @implementation Sms
 @synthesize callbackID;
-
-- (CDVPlugin *)initWithWebView:(UIWebView *)theWebView {
-    self = (Sms *)[super initWithWebView:theWebView];
-    return self;
-}
 
 - (void)send:(CDVInvokedUrlCommand*)command {
     [self.commandDelegate runInBackground:^{
