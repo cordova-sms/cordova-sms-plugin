@@ -1,6 +1,6 @@
 {
   "name": "cordova-sms-plugin",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Cross-platform plugin for Cordova / PhoneGap to to easily send SMS. Available for Android, iOS and WP.",
   "cordova": {
     "id": "com.cordova.plugins.sms",
