@@ -11,7 +11,8 @@ namespace WPCordovaClassLib.Cordova.Commands
     public void send(string options)
     {
       string[] optValues = JsonHelper.Deserialize<string[]>(options);
-      String number = optValues[0];
+      string[] numValues = JsonHelper.Deserialize<string[]>(optValues[0]);
+      String number = String.Join(",", numValues);
       String message = optValues[1];
 
       SmsComposeTask task = new SmsComposeTask();
