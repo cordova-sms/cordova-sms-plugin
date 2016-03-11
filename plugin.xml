@@ -61,8 +61,5 @@
         <js-module src="src/windows/SmsProxy.js" name="SmsProxy">
             <merges target="" />
         </js-module>
-        <config-file target="package.appxmanifest" parent="/Package/Capabilities">
-            <DeviceCapability Name="chat" />
-        </config-file>
     </platform>
 </plugin>
