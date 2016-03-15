@@ -33,6 +33,7 @@
         <source-file src="src/android/Sms.java" target-dir="src/com/cordova/plugins/sms" />
     </platform>
 
+    <!-- wp8 -->
     <platform name="wp8">
         <source-file src="src/wp8/Sms.cs" />
 
@@ -53,5 +54,12 @@
         <header-file src="src/ios/Sms.h" />
         <source-file src="src/ios/Sms.m" />
         <framework src="MessageUI.framework" weak="true" />
+    </platform>
+    
+    <!-- windows -->
+    <platform name="windows">
+        <js-module src="src/windows/SmsProxy.js" name="SmsProxy">
+            <merges target="" />
+        </js-module>
     </platform>
 </plugin>
