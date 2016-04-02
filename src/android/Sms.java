@@ -23,6 +23,8 @@ public class Sms extends CordovaPlugin {
 
 	public final String ACTION_SEND_SMS = "send";
 
+	public final String ACTION_HAS_PERMISSION = "has_permission";
+
 	private static final String INTENT_FILTER_SMS_SENT = "SMS_SENT";
 
 	private static final int SEND_SMS_REQ_CODE = 0;
@@ -41,6 +43,10 @@ public class Sms extends CordovaPlugin {
 			} else {
 				requestPermission();
 			}
+			return true;
+		}
+		else if (action.equals(ACTION_HAS_PERMISSION)) {
+			callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, hasPermission()));
 			return true;
 		}
 		return false;
