@@ -5,7 +5,7 @@ module.exports = {
         var chatMessage = new Windows.ApplicationModel.Chat.ChatMessage();
         chatMessage.body = args[1];
         chatMessage.recipients.push(args[0]);
-        Windows.ApplicationModel.Chat.ChatMessageManager.showComposeSmsMessageAsync(chatMessage);
+        Windows.ApplicationModel.Chat.ChatMessageManager.showComposeSmsMessageAsync(chatMessage).done(win, fail);
 
     }
 };
