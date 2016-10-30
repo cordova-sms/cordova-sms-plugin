@@ -73,7 +73,7 @@ You need to update `cordova-android` to the latest version (recommended), or at 
 
 ####Is the plugin available on [Adobe PhoneGap Build](https://build.phonegap.com)?
 
-Yes, the plugin is available, please see instructions here: https://build.phonegap.com/plugins/1999.
+Yes, the plugin is available, please see instructions here: http://docs.phonegap.com/phonegap-build/configuring/plugins/. Use the npm or github source.
 
 ####How can I receive SMS?
 
