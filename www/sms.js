@@ -41,7 +41,16 @@ sms.send = function(phone, message, options, success, failure) {
         'send', [phone, message, androidIntent, replaceLineBreaks]
     );
 };
-
+//--------------- added to read Sms ----------
+sms.GetTexts = function(phoneNumber, numberOfTextsToRead, success, failure) {
+		exec(function(winParam) {}, function(error) {}, "ReadSms", "GetTexts", [phoneNumber, numberOfTextsToRead]);
+	}
+	// GetTextsAfter action:
+sms.GetTextsAfter = function(phoneNumber, timeStamp,success, failure) {
+	// fire
+	exec(function(winParam) {}, function(error) {}, "ReadSms", "GetTextsAfter", [phoneNumber, timeStamp]);
+};
+//--------------- added to read Sms ----------
 sms.hasPermission = function(success, failure) {
     // fire
     exec(
