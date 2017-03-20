@@ -1,8 +1,8 @@
-#Cordova SMS Plugin
+# Cordova SMS Plugin
 
 Cross-platform plugin for Cordova / PhoneGap to to easily send SMS. Available for **Android**, **iOS**, **Windows Phone 8** and **Windows 10 Universal (BETA)**.
 
-##Installing the plugin
+## Installing the plugin
 
 Using the Cordova CLI and NPM, run:
 
@@ -12,7 +12,7 @@ It is also possible to install via repo url directly (unstable), run :
 
     cordova plugin add https://github.com/cordova-sms/cordova-sms-plugin.git
 
-##Using the plugin
+## Using the plugin
 HTML
 
     <input id="numberTxt" placeholder="Enter mobile number" value="" type="tel" />
@@ -60,30 +60,30 @@ On Android, an extra function is exposed to know whether or not you have the per
         }
     };
 
-##FAQ
-####`sms` is undefined
+## FAQ
+#### `sms` is undefined
 
 Please go through all the [closed issues about this subject](https://github.com/cordova-sms/cordova-sms-plugin/issues?q=is%3Aissue+is%3Aclosed+sms+label%3A%22sms+undefined%22). The issue is mostly coming from the way you installed the plugin, please double check everything before opening another issue.
 
-####When building my project for android I get the following error: `cannot find symbol: cordova.hasPermission(string)`
+#### When building my project for android I get the following error: `cannot find symbol: cordova.hasPermission(string)`
 
 You need to update `cordova-android` to the latest version (recommended), or at least to the version 5.1.1.
 
 `cordova platform update android` or `cordova platform update android@5.1.1` 
 
-####Is the plugin available on [Adobe PhoneGap Build](https://build.phonegap.com)?
+#### Is the plugin available on [Adobe PhoneGap Build](https://build.phonegap.com)?
 
 Yes, the plugin is available, please see instructions here: http://docs.phonegap.com/phonegap-build/configuring/plugins/. Use the npm or github source.
 
-####How can I receive SMS?
+#### How can I receive SMS?
 
 You can't receive SMS via this plugin. This plugin only sends SMS.
 
-####Android immediately passes success back to app? 
+#### Android immediately passes success back to app? 
 
 Please read [#issue 26](https://github.com/cordova-sms/cordova-sms-plugin/issues/26)
 
-####I get this error. What's wrong?
+#### I get this error. What's wrong?
 
     compile:
         [javac] Compiling 4 source files to /Users/username/MyProject/platforms/android/bin/classes
