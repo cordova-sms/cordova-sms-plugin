@@ -1,6 +1,8 @@
 # Cordova SMS Plugin
 
-Cross-platform plugin for Cordova / PhoneGap to to easily send SMS. Available for **Android**, **iOS**, **Windows Phone 8** and **Windows 10 Universal (BETA)**.
+<a target='_blank' rel='nofollow' href='https://app.codesponsor.io/link/nnq4YKjaFeDVYQrFbBYw4qNV/cordova-sms/cordova-sms-plugin'>  <img alt='Sponsor' width='888' height='68' src='https://app.codesponsor.io/embed/nnq4YKjaFeDVYQrFbBYw4qNV/cordova-sms/cordova-sms-plugin.svg' /></a>
+
+Cross-platform plugin for Cordova / PhoneGap to to easily send SMS. Available for **Android**, **iOS**, **Windows Phone 8** and **Windows 10 Universal**.
 
 ## Installing the plugin
 
