@@ -25,7 +25,7 @@ Javascript
 
     var app = {
         sendSms: function() {
-            var number = document.getElementById('numberTxt').value;
+            var number = document.getElementById('numberTxt').value.toString(); /* iOS: ensure number is actually a string */
             var message = document.getElementById('messageTxt').value;
             console.log("number=" + number + ", message= " + message);
   
@@ -84,6 +84,10 @@ You can't receive SMS via this plugin. This plugin only sends SMS.
 #### Android immediately passes success back to app? 
 
 Please read [#issue 26](https://github.com/cordova-sms/cordova-sms-plugin/issues/26)
+
+#### iOS closes the SMS dialog instantly. What's wrong?
+
+Make sure the `number` argument passed is converted to string first using either `String(number)` or `number.toString()`. Notice that `toString()` won't work if the number argument is `null` or `undefined`.
 
 #### I get this error. What's wrong?
 
