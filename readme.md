@@ -61,7 +61,12 @@ On Android, two extra functions are exposed to know whether or not an app has pe
         requestSMSPermission: function() {
             var success = function (hasPermission) { 
                 if (!hasPermission) {
-                    sms.requestPermission();
+                    sms.requestPermission(function() {
+                        console.log('[OK] Permission accepted')
+                    }, function(error) {
+                        console.info('[WARN] Permission not accepted')
+                        // Handle permission not accepted
+                    })
                 }
             };
             var error = function (e) { alert('Something went wrong:' + e); };
