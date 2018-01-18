@@ -42,7 +42,7 @@ Javascript
         }
     };
 
-On Android, an extra function is exposed to know whether or not you have the permission to send a SMS (Android Marshmallow permission).
+On Android, two extra functions are exposed to know whether or not an app has permission and to request permission to send SMS (Android Marshmallow +).
 
     var app = {
         checkSMSPermission: function() {
@@ -53,6 +53,15 @@ On Android, an extra function is exposed to know whether or not you have the per
                 else {
                     // show a helpful message to explain why you need to require the permission to send a SMS
                     // read http://developer.android.com/training/permissions/requesting.html#explain for more best practices
+                }
+            };
+            var error = function (e) { alert('Something went wrong:' + e); };
+            sms.hasPermission(success, error);
+        },
+        requestSMSPermission: function() {
+            var success = function (hasPermission) { 
+                if (!hasPermission) {
+                    sms.requestPermission();
                 }
             };
             var error = function (e) { alert('Something went wrong:' + e); };
