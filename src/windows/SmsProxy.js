@@ -4,7 +4,7 @@ module.exports = {
 
         var chatMessage = new Windows.ApplicationModel.Chat.ChatMessage();
         chatMessage.body = args[1];
-        const validRecipent = args[0].every(function (r) {
+        const validRecipent = args[0] && args[0].every(function (r) {
             return !r == false;
         });
         if (validRecipent) {
