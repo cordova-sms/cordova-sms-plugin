@@ -89,6 +89,10 @@ var app = {
 
 Please go through all the [closed issues about this subject](https://github.com/cordova-sms/cordova-sms-plugin/issues?q=is%3Aissue+is%3Aclosed+sms+label%3A%22sms+undefined%22). The issue is mostly coming from the way you installed the plugin, please double check everything before opening another issue.
 
+#### Android: INTENT vs NO INTENT
+
+If sending a SMS is a core feature of your application and you would like to send a SMS with `options = { android: { intent: '' } }`, you need to fill [this form](https://docs.google.com/forms/d/e/1FAIpQLSexGxix-00xgnBhPLDvxwjbTcYqHB7enz-cQVJIY4zLuJpRtQ/viewform). If it is not a core feature of your application, you have to use `options = { android: { intent: 'INTENT' } }`. Please, read [this page](https://support.google.com/googleplay/android-developer/answer/9047303) to learn more.
+
 #### When building my project for android I get the following error: `cannot find symbol: cordova.hasPermission(string)`
 
 You need to update `cordova-android` to the latest version (recommended), or at least to the version 5.1.1.
