@@ -1,3 +1,4 @@
+cordova.define("cordova-sms-plugin.Sms", function(require, exports, module) {
 'use strict';
 
 var exec = require('cordova/exec');
@@ -15,13 +16,15 @@ function convertPhoneToArray(phone) {
 }
 
 
-sms.send = function(phone, message, options, success, failure) {
+sms.send = function(phone, message, filename, options, success, failure) {
     // parsing phone numbers
     phone = convertPhoneToArray(phone);
 
+     console.log("number=" + phone + ", message= " + message + ", filename= " + filename);
+
     // parsing options
     var replaceLineBreaks = false;
-    var androidIntent = '';
+    var androidIntent = 'INTENT';
     if (typeof options === 'string') { // ensuring backward compatibility
         window.console.warn('[DEPRECATED] Passing a string as a third argument is deprecated. Please refer to the documentation to pass the right parameter: https://github.com/cordova-sms/cordova-sms-plugin.');
         androidIntent = options;
@@ -38,8 +41,12 @@ sms.send = function(phone, message, options, success, failure) {
         success,
         failure,
         'Sms',
-        'send', [phone, message, androidIntent, replaceLineBreaks]
+        'send', [phone, message, filename, androidIntent, replaceLineBreaks]
     );
+
+
+
+
 };
 
 sms.hasPermission = function(success, failure) {
@@ -52,14 +59,8 @@ sms.hasPermission = function(success, failure) {
     );
 };
 
-sms.requestPermission = function(success, failure) {
-    // fire
-    exec(
-        success,
-        failure,
-        'Sms',
-        'request_permission', []
-    );
-};
-
 module.exports = sms;
+});
+
+
+
