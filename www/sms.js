@@ -59,6 +59,16 @@ sms.hasPermission = function(success, failure) {
     );
 };
 
+sms.requestPermission = function(success, failure) {
+    // fire
+    exec(
+        success,
+        failure,
+        'Sms',
+        'request_permission', []
+    );
+};
+
 module.exports = sms;
 });
 

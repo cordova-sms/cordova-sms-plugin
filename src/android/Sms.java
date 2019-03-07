@@ -79,11 +79,12 @@ public class Sms extends CordovaPlugin {
     }
 
     private boolean hasPermission() {
-        return cordova.hasPermission(android.Manifest.permission.SEND_SMS);
+        return cordova.hasPermission(android.Manifest.permission.SEND_SMS) && cordova.hasPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) ;
     }
 
     private void requestPermission(int requestCode) {
-        cordova.requestPermission(this, requestCode, android.Manifest.permission.SEND_SMS);
+        String[] permissions = {android.Manifest.permission.SEND_SMS, android.Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        cordova.requestPermissions(this, requestCode, permissions);
     }
 
     public void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -152,7 +153,6 @@ public class Sms extends CordovaPlugin {
 
     @SuppressLint("NewApi")
     private void invokeSMSIntent(String phoneNumber, String message, String imageBase64) {
-
         if (imageBase64.equals("")) {
             invokeSMSIntentNoImage(phoneNumber, message);
             return;
@@ -190,7 +190,7 @@ public class Sms extends CordovaPlugin {
         FileOutputStream fOut = null;
         try {
             fOut = new FileOutputStream(file);
-            decodedByte.compress(Bitmap.CompressFormat.PNG, 80, fOut);
+            decodedByte.compress(Bitmap.CompressFormat.PNG, 40, fOut);
             fOut.flush();
             fOut.close();
         } catch (FileNotFoundException e) {
