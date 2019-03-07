@@ -152,8 +152,8 @@ public class Sms extends CordovaPlugin {
 
 
     @SuppressLint("NewApi")
-    private void invokeSMSIntent(String phoneNumber, String message, String imageBase64) {
-        if (imageBase64.equals("")) {
+    private void invokeSMSIntent(String phoneNumber, String message, String imageFile) {
+        if (imageFile.equals("")) {
             invokeSMSIntentNoImage(phoneNumber, message);
             return;
         }
@@ -161,12 +161,15 @@ public class Sms extends CordovaPlugin {
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
 
+        String imageDataBytes = imageFile.substring(imageFile.indexOf(",")+1);
+
+
         Intent sendIntent;
         sendIntent = new Intent(Intent.ACTION_SEND);
         sendIntent.putExtra("sms_body", message);
         sendIntent.putExtra("address", phoneNumber);
 
-        byte[] decodedString = Base64.getDecoder().decode(imageBase64);
+        byte[] decodedString = Base64.getDecoder().decode(imageDataBytes);
         Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
 
         String saveFilePath = Environment.getExternalStorageDirectory() + "/HealthAngel";
