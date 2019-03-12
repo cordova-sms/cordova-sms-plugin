@@ -1,4 +1,7 @@
 #import "Sms.h"
+#import "NSData+Base64.h"
+#import "MobileCoreServices/MobileCoreServices.h"
+
 
 @implementation Sms
 @synthesize callbackID;
@@ -9,26 +12,27 @@
         
         if(![MFMessageComposeViewController canSendText]) {
             NSString *errorMessage = @"SMS Text not available.";
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Notice"
-                                                            message:errorMessage
-                                                           delegate:self
-                                                  cancelButtonTitle:@"OK"
-                                                  otherButtonTitles:nil
-                                  ];
-
+            
             dispatch_async(dispatch_get_main_queue(), ^{
-                [alert show];
+//                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Notice"
+//                                                                message:errorMessage
+//                                                               delegate:self
+//                                                      cancelButtonTitle:@"OK"
+//                                                      otherButtonTitles:nil
+//                                      ];
+//                
+//                [alert show];
                 CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
                                                                   messageAsString:errorMessage];
-
+                
                 [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackID];
             });
             return;
         }
-        
+
         MFMessageComposeViewController *composeViewController = [[MFMessageComposeViewController alloc] init];
         composeViewController.messageComposeDelegate = self;
-        
+
         NSString* body = [command.arguments objectAtIndex:1];
         if (body != nil) {
             BOOL replaceLineBreaks = [[command.arguments objectAtIndex:3] boolValue];
@@ -37,7 +41,7 @@
             }
             [composeViewController setBody:body];
         }
-        
+
         NSMutableArray* recipients = [command.arguments objectAtIndex:0];
         if (recipients != nil) {
             if ([recipients.firstObject isEqual: @""]) {
@@ -46,6 +50,25 @@
             
             [composeViewController setRecipients:recipients];
         }
+
+        NSString *imageStr = [command.arguments objectAtIndex:2];
+        if (imageStr != nil) {
+            UIImage *image = [UIImage imageWithData:[NSData dataFromBase64String:imageStr]];
+
+            if (image != nil) {
+                if([MFMessageComposeViewController respondsToSelector:@selector(canSendAttachments)] && [MFMessageComposeViewController canSendAttachments])
+                {
+                    NSData* attachment = UIImageJPEGRepresentation(image, 1.0);
+                    
+                    NSString* uti = (NSString*)kUTTypeMessage;
+                    [composeViewController addAttachmentData:attachment typeIdentifier:uti filename:@"image.png"];
+                }
+                UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+                pasteboard.persistent = YES;
+                pasteboard.image = image;
+            }
+        }
+
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.viewController presentViewController:composeViewController animated:YES completion:nil];
         });
@@ -88,7 +111,7 @@
     } else {
         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
                                                           messageAsString:message];
-
+        
         [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackID];
     }
 }
