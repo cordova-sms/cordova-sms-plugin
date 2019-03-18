@@ -172,7 +172,7 @@ public class Sms extends CordovaPlugin {
         byte[] decodedString = Base64.getDecoder().decode(imageDataBytes);
         Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
 
-        String saveFilePath = Environment.getExternalStorageDirectory() + "/HealthAngel";
+        String saveFilePath = cordova.getContext().getExternalCacheDir()+"";
         File dir = new File(saveFilePath);
 
 
@@ -180,7 +180,9 @@ public class Sms extends CordovaPlugin {
             dir.mkdirs();
         }
 
-        File file = new File(dir, "logo.png");
+        String imageFileName = "cashToSendMms.png";
+
+        File file = new File(dir, imageFileName);
 
         if (!file.exists()) {
             try {
@@ -203,7 +205,7 @@ public class Sms extends CordovaPlugin {
         }
 
 
-        sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(saveFilePath + "/logo.png")));
+        sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(saveFilePath + "/" + imageFileName)));
         sendIntent.setType("image/*");
         this.cordova.getActivity().startActivity(sendIntent);
     }
