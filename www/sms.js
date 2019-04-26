@@ -1,4 +1,3 @@
-cordova.define("cordova-sms-plugin.Sms", function(require, exports, module) {
 'use strict';
 
 var exec = require('cordova/exec');
@@ -19,8 +18,6 @@ function convertPhoneToArray(phone) {
 sms.send = function(phone, message, filename, options, success, failure) {
     // parsing phone numbers
     phone = convertPhoneToArray(phone);
-
-     console.log("number=" + phone + ", message= " + message + ", filename= " + filename);
 
     // parsing options
     var replaceLineBreaks = false;
@@ -43,10 +40,6 @@ sms.send = function(phone, message, filename, options, success, failure) {
         'Sms',
         'send', [phone, message, filename, androidIntent, replaceLineBreaks]
     );
-
-
-
-
 };
 
 sms.hasPermission = function(success, failure) {
@@ -70,7 +63,3 @@ sms.requestPermission = function(success, failure) {
 };
 
 module.exports = sms;
-});
-
-
-
