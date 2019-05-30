@@ -26,7 +26,7 @@
 
         <config-file target="AndroidManifest.xml" parent="/manifest">
             <uses-feature android:name="android.hardware.telephony" android:required="false" />
-            <uses-permission android:name="android.permission.SEND_SMS" />
+            <uses-permission android:name="android.permission.SEND_SMS"/>
         </config-file>
 
         <source-file src="src/android/Sms.java" target-dir="src/com/cordova/plugins/sms" />
