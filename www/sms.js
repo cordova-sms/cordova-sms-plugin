@@ -22,6 +22,7 @@ sms.send = function(phone, message, options, success, failure) {
     // parsing options
     var replaceLineBreaks = false;
     var androidIntent = '';
+    var attachments = null;
     if (typeof options === 'string') { // ensuring backward compatibility
         window.console.warn('[DEPRECATED] Passing a string as a third argument is deprecated. Please refer to the documentation to pass the right parameter: https://github.com/cordova-sms/cordova-sms-plugin.');
         androidIntent = options;
@@ -31,6 +32,13 @@ sms.send = function(phone, message, options, success, failure) {
         if (options.android && typeof options.android === 'object') {
             androidIntent = options.android.intent;
         }
+        if (options.attachments) {
+            if (Array.isArray(options.attachments)) {
+                attachments = options.attachments;
+            } else {
+                attachments = [options.attachments]
+            }
+        }
     }
 
     // fire
@@ -38,7 +46,7 @@ sms.send = function(phone, message, options, success, failure) {
         success,
         failure,
         'Sms',
-        'send', [phone, message, androidIntent, replaceLineBreaks]
+        'send', [phone, message, androidIntent, replaceLineBreaks, attachments]
     );
 };
 
