@@ -33,11 +33,7 @@ sms.send = function(phone, message, options, success, failure) {
             androidIntent = options.android.intent;
         }
         if (options.attachments) {
-            if (Array.isArray(options.attachments)) {
-                attachments = options.attachments;
-            } else {
-                attachments = [options.attachments]
-            }
+            attachments = options.attachments;
         }
     }
 
