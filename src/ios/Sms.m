@@ -8,22 +8,27 @@
         self.callbackID = command.callbackId;
         
         if(![MFMessageComposeViewController canSendText]) {
-            NSString *errorMessage = @"SMS Text not available.";
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Notice"
-                                                            message:errorMessage
-                                                           delegate:self
-                                                  cancelButtonTitle:@"OK"
-                                                  otherButtonTitles:nil
-                                  ];
 
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [alert show];
-                CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
-                                                                  messageAsString:errorMessage];
+        	dispatch_async(dispatch_get_main_queue(), ^{
+				NSString *errorMessage = NSLocalizedString(@"SMS Text not available.", nil);
 
-                [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackID];
-            });
-            return;
+				UIAlertController * alert = [UIAlertController
+											 alertControllerWithTitle:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"]
+											 message:errorMessage
+											 preferredStyle:UIAlertControllerStyleAlert];
+
+				UIAlertAction *ok =[
+									UIAlertAction actionWithTitle:NSLocalizedString(@"OK", nil)
+									style:UIAlertActionStyleDefault
+									handler:^(UIAlertAction *action){
+										CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:errorMessage];
+										[self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackID];
+										}
+									];
+				[alert addAction:ok];
+				[self.viewController presentViewController:alert animated:YES completion:nil];
+			});
+			return;
         }
         
         dispatch_async(dispatch_get_main_queue(), ^{
