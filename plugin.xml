@@ -23,12 +23,27 @@
                 <param name="android-package" value="com.cordova.plugins.sms.Sms"/>
             </feature>
         </config-file>
+        
 
         <config-file target="AndroidManifest.xml" parent="/manifest">
             <uses-feature android:name="android.hardware.telephony" android:required="false" />
         </config-file>
+        <config-file target="AndroidManifest.xml" parent="application">
+            <provider
+                android:name="androidx.core.content.FileProvider"
+                android:authorities="${applicationId}.cordova.plugins.sms.fileprovider"
+                android:grantUriPermissions="true"
+                android:exported="false">
+                <meta-data
+                    android:name="android.support.FILE_PROVIDER_PATHS"
+                    android:resource="@xml/cordova_sms_filepaths" />
+            </provider>
+        </config-file>
 
         <source-file src="src/android/Sms.java" target-dir="src/com/cordova/plugins/sms" />
+        <source-file
+            src="src/android/xml/cordova_sms_filepaths.xml"
+            target-dir="res/xml" />
     </platform>
 
     <!-- wp8 -->

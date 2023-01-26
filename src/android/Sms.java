@@ -12,12 +12,25 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.Telephony;
 import android.telephony.SmsManager;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import android.util.Base64;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
+import org.json.JSONObject;
 import org.json.JSONException;
+
+import androidx.core.content.FileProvider;
 
 public class Sms extends CordovaPlugin {
 
@@ -103,6 +116,11 @@ public class Sms extends CordovaPlugin {
 					String message = args.getString(1);
 					String method = args.getString(2);
 					boolean replaceLineBreaks = Boolean.parseBoolean(args.getString(3));
+					JSONObject attachments = null;
+
+					if (!args.isNull(4)) {
+						attachments = args.getJSONObject(4);
+					}
 
 					// replacing \n by new line if the parameter replaceLineBreaks is set to true
 					if (replaceLineBreaks) {
@@ -113,9 +131,7 @@ public class Sms extends CordovaPlugin {
 						return;
 					}
 					if (method.equalsIgnoreCase("INTENT")) {
-						invokeSMSIntent(phoneNumber, message);
-						// always passes success back to the app
-						callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
+						invokeSMSIntent(phoneNumber, message, attachments);
 					} else {
 						send(callbackContext, phoneNumber, message);
 					}
@@ -134,18 +150,66 @@ public class Sms extends CordovaPlugin {
 	}
 
 	@SuppressLint("NewApi")
-	private void invokeSMSIntent(String phoneNumber, String message) {
+	private void invokeSMSIntent(String phoneNumber, String message, JSONObject attachments) {
 		Intent sendIntent;
-		if ("".equals(phoneNumber) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+		List<File> images = null;
+
+		if (attachments != null) {
+			Iterator<String> keys = attachments.keys();
+			while(keys.hasNext()) {
+				String fileName = keys.next();
+				String base64String;
+				try {
+					base64String = attachments.getString(fileName);
+				} catch (JSONException e) {
+					callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
+					return;
+				}
+				byte[] imgBytes = Base64.decode(base64String, Base64.DEFAULT);
+
+				File tmpDir = cordova.getContext().getCacheDir();
+				File imgFile = new File(tmpDir, fileName);
+
+				try {
+					imgFile.createNewFile();
+				} catch (IOException e) {
+					callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.IO_EXCEPTION));
+				}
+
+				try (OutputStream stream = new FileOutputStream(imgFile)) {
+					stream.write(imgBytes);
+				} catch (NullPointerException e) {
+					callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR));
+				} catch (IOException e) {
+					callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.IO_EXCEPTION));
+				}
+				if (images == null) {
+					images = new ArrayList<>();
+				}
+				images.add(imgFile);
+			}
+		}
+
+		final boolean hasImage = images != null;
+		final boolean hasMultipleImages = hasImage && images.size() > 1;
+		final boolean emptyPhoneNumber = "".equals(phoneNumber);
+
+		if ((emptyPhoneNumber || hasImage)  && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 			String defaultSmsPackageName = Telephony.Sms.getDefaultSmsPackage(this.cordova.getActivity());
 
-			sendIntent = new Intent(Intent.ACTION_SEND);
-			sendIntent.setType("text/plain");
+			sendIntent = new Intent(hasMultipleImages ? Intent.ACTION_SEND_MULTIPLE : Intent.ACTION_SEND);
 			sendIntent.putExtra(Intent.EXTRA_TEXT, message);
+
+			if (!emptyPhoneNumber) {	
+				// See http://stackoverflow.com/questions/7242190/sending-sms-using-intent-does-not-add-recipients-on-some-devices
+				sendIntent.putExtra("address", phoneNumber);
+				sendIntent.setData(Uri.parse("smsto:" + Uri.encode(phoneNumber)));
+			}
 
 			if (defaultSmsPackageName != null) {
 				sendIntent.setPackage(defaultSmsPackageName);
 			}
+			sendIntent.setType( hasImage ? "image/*" : "text/plain");
 		} else {
 			sendIntent = new Intent(Intent.ACTION_VIEW);
 			sendIntent.putExtra("sms_body", message);
@@ -153,6 +217,22 @@ public class Sms extends CordovaPlugin {
 			sendIntent.putExtra("address", phoneNumber);
 			sendIntent.setData(Uri.parse("smsto:" + Uri.encode(phoneNumber)));
 		}
+
+		if (hasImage) {
+			String FILE_AUTHORITY =  cordova.getContext().getPackageName() + ".cordova.plugins.sms.fileprovider";
+
+			ArrayList<Uri> imageUris = images.stream()
+					.map(file -> FileProvider.getUriForFile(cordova.getContext(), FILE_AUTHORITY, file))
+					.collect(Collectors.toCollection(ArrayList::new));
+			if (hasMultipleImages) {
+				sendIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, imageUris);
+			} else {
+				sendIntent.putExtra(Intent.EXTRA_STREAM, imageUris.get(0));
+			}
+			sendIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+		}
+
+		callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
 		this.cordova.getActivity().startActivity(sendIntent);
 	}
 
