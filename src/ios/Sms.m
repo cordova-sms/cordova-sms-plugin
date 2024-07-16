@@ -52,6 +52,21 @@
 
                 [composeViewController setRecipients:recipients];
             }
+            
+            NSMutableDictionary* attachments = [command.arguments objectAtIndex:4];
+            if (attachments != nil && ![attachments isEqual:[NSNull null]]) {
+                for (NSString* filename in attachments) {
+                    NSString* imgStr = [attachments objectForKey:filename]; 
+                    NSData *data  = [[NSData alloc] initWithBase64EncodedString:imgStr options:0];
+                    UIImage *image = [UIImage imageWithData:data];
+                    if (image != nil) {
+                        NSData* attachment = UIImageJPEGRepresentation(image, 1.0);
+                        [composeViewController 
+                            addAttachmentData:attachment 
+                            typeIdentifier:@"public.jpeg" filename:filename];
+                    }
+                }
+            }
             [self.viewController presentViewController:composeViewController animated:YES completion:nil];
         });
     }];
