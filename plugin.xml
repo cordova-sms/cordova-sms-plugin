@@ -2,7 +2,7 @@
 <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
         xmlns:android="http://schemas.android.com/apk/res/android"
            id="cordova-sms-plugin"
-      version="1.0.3">
+      version="1.0.4">
     <name>Cordova SMS Plugin</name>
     <description>Cross-platform plugin for Cordova / PhoneGap to to easily send SMS. Available for Android and iOS.</description>
     <license>MIT</license>
