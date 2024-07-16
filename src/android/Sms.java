@@ -194,7 +194,16 @@ public class Sms extends CordovaPlugin {
 
 		// randomize the intent filter action to avoid using the same receiver
 		String intentFilterAction = INTENT_FILTER_SMS_SENT + java.util.UUID.randomUUID().toString();
+		//this.cordova.getActivity().registerReceiver(broadcastReceiver, new IntentFilter(intentFilterAction));
+        // Apps and services that target Android 14 (API level 34) or higher and use context-registered receivers are required to specify a flag to indicate whether or not the receiver should be exported to all other apps on the device: either RECEIVER_EXPORTED or RECEIVER_NOT_EXPORTED , respectively. 
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+		{
+		this.cordova.getActivity().registerReceiver(broadcastReceiver, new IntentFilter(intentFilterAction),Context.RECEIVER_EXPORTED);
+		}
+		else
+		{
 		this.cordova.getActivity().registerReceiver(broadcastReceiver, new IntentFilter(intentFilterAction));
+		}
 
 		PendingIntent sentIntent = PendingIntent.getBroadcast(this.cordova.getActivity(), 0, new Intent(intentFilterAction), PendingIntent.FLAG_IMMUTABLE);
 
