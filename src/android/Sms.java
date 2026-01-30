@@ -10,17 +10,22 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Build.VERSION;
 import android.provider.Telephony;
 import android.telephony.SmsManager;
+import android.telephony.SubscriptionInfo;
+import android.telephony.SubscriptionManager;
 import java.util.ArrayList;
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.apache.cordova.LOG;
 
 public class Sms extends CordovaPlugin {
 
+	private static final String LOG_TAG = "CordovaPluginSMS";
 	public final String ACTION_SEND_SMS = "send";
 
 	public final String ACTION_HAS_PERMISSION = "has_permission";
@@ -95,6 +100,7 @@ public class Sms extends CordovaPlugin {
 				try {
 					//parsing arguments
 					String separator = ";";
+					LOG.i(LOG_TAG, "SMS args" + args);
 					if (android.os.Build.MANUFACTURER.equalsIgnoreCase("Samsung")) {
 						// See http://stackoverflow.com/questions/18974898/send-sms-through-intent-to-multiple-phone-numbers/18975676#18975676
 						separator = ",";
@@ -102,6 +108,7 @@ public class Sms extends CordovaPlugin {
 					String phoneNumber = args.getJSONArray(0).join(separator).replace("\"", "");
 					String message = args.getString(1);
 					String method = args.getString(2);
+                    String slot = args.getString(4);
 					boolean replaceLineBreaks = Boolean.parseBoolean(args.getString(3));
 
 					// replacing \n by new line if the parameter replaceLineBreaks is set to true
@@ -117,7 +124,7 @@ public class Sms extends CordovaPlugin {
 						// always passes success back to the app
 						callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
 					} else {
-						send(callbackContext, phoneNumber, message);
+						send(callbackContext, phoneNumber, message, slot);
 					}
 					return;
 				} catch (JSONException ex) {
@@ -155,9 +162,35 @@ public class Sms extends CordovaPlugin {
 		}
 		this.cordova.getActivity().startActivity(sendIntent);
 	}
-
-	private void send(final CallbackContext callbackContext, String phoneNumber, String message) {
-		SmsManager manager = SmsManager.getDefault();
+    private int getSubscriptionId(String str) {
+        if (str == null) {
+            return -1;
+        }
+        try {
+            int parseInt = Integer.parseInt(str);
+            if (VERSION.SDK_INT < 22) {
+                return -1;
+            }
+            int i = -1;
+			
+            for (SubscriptionInfo subscriptionInfo : SubscriptionManager.from(this.cordova.getActivity()).getActiveSubscriptionInfoList()) {
+                if (parseInt == subscriptionInfo.getSimSlotIndex()) {
+                    i = subscriptionInfo.getSubscriptionId();
+                }
+            }
+            return i;
+        } catch (Exception e) {
+            return -1;
+        }
+    }
+	private void send(final CallbackContext callbackContext, String phoneNumber, String message, String slot) {
+		SmsManager manager;
+        int subscriptionId = getSubscriptionId(slot);
+        if (subscriptionId < 0) {
+            manager = SmsManager.getDefault();
+        } else {
+            manager = SmsManager.getSmsManagerForSubscriptionId(subscriptionId);
+        }
 		final ArrayList<String> parts = manager.divideMessage(message);
 
 		// by creating this broadcast receiver we can check whether or not the SMS was sent
